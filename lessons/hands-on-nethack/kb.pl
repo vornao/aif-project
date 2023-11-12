@@ -102,19 +102,24 @@ action(get_to_weapon(Direction)) :- ... .
 is_close(R1,C1,R2,C2) :- R1 == R2, (C1 is C2+1; C1 is C2-1).
 is_close(R1,C1,R2,C2) :- C1 == C2, (R1 is R2+1; R1 is R2-1).
 is_close(R1,C1,R2,C2) :- (R1 is R2+1; R1 is R2-1), (C1 is C2+1; C1 is C2-1).
+% potevamo definire is_close usando degli OR (;) come si fa dopo per next_step
 
 % the agent can perform "dangerous" actions - e.g. attack a monster - if its health is above 50%
 healthy :- health(H), H > 50.
 
-% compute the direction given the starting point and the target position
-% check if the direction leads to a safe position
+% compute the direction given the starting point (R1,C1) and the target position (R2,C2)
+% check if the direction (D) leads to a safe position
 % D = temporary direction - may be unsafe
 % Direction = the definitive direction 
 next_step(R1,C1,R2,C2, D) :-
     ( R1 == R2 -> ( C1 > C2 -> D = west; D = east );
+    % For‘x’the precedence of the argument must be strictly lower
+    % Precedence = 1100	for	;
+    % Precedence = 1050	for	->
     ( C1 == C2 -> ( R1 > R2 -> D = north; D = south);
     ( R1 > R2 ->
         ( C1 > C2 -> D = northwest; D = northeast );
+        % Ricordiamo che siamo in una matrice, quindi l'origine è in alto a sinistra
         ( C1 > C2 -> D = southwest; D = southeast )
     ))).
     % safe_direction(R1, C1, D, Direction).
@@ -127,10 +132,10 @@ safe_direction(R, C, D, Direction) :- resulting_position(R, C, NewR, NewC, D),
                                       close_direction(D, ND), safe_direction(R, C, ND, Direction)
                                       ).
 
-% a square if unsafe if there is a trap or an enemy
+% a square is unsafe if there is a trap or an enemy
 unsafe_position(R, C) :- position(trap, _, R, C).
 unsafe_position(R, C) :- position(enemy, _, R, C).
-unsafe_position(R,C) :- position(enemy, _, ER, EC), is_close(ER, EC, R, C).
+unsafe_position(R, C) :- position(enemy, _, ER, EC), is_close(ER, EC, R, C).
 
 
 
@@ -173,7 +178,10 @@ close_direction(northwest, north).
 has(agent, _, _) :- fail.
 
 unsafe_position(_,_) :- fail.
+% A parte i 3 casi unsafe_position definiti prima, stiamo imponendo che Prolog 'fallisce' la dimostrazione
+
 safe_position(R,C) :- \+ unsafe_position(R,C).
+% In Prolog \+ means 'not provable'
 
 is_beatable(kobold, _).
 is_beatable(giantmummy, tsurugi).
