@@ -7,12 +7,12 @@
 
 % TODO: RULES FOR ACTION SELECTION
 % REMEMBER: The action rules are ordered by priority
-% For movement actions, always check is the direction selected is safe.
+% For movement actions, always check if the direction selected is safe.
 
 % eat the apple and win the game
 % Requirements:
 %   - agent must have a comestible apple
-action(eat) :- ... .
+action(eat) :- has(agent, comestible, apple).
 
 % attack an enemy
 % the attack is automatic when you move towards it
@@ -25,7 +25,19 @@ action(eat) :- ... .
 %   - agent and enemy are close
 %   - agent is healthy
 %   - next step is in the direction towards the enemy
-action(attack(Direction)) :- ... .
+action(attack(Direction)) :- 
+(   
+    position(agent, _, RA, CA),
+    position(E, enemy, RE, CE),
+    wields_weapon(agent, W),
+    is_beatable(E, W),
+    is_close(RA, CA, RE, CE),
+    healthy(agent),
+    next_step(RA, CA, RE, CE, Direction)
+).
+% RE, CE is the position of the Enemy
+% RA, CA is the position of the Agent
+% W is the wielded weapon
 
 % run away from an enemy, when it is not safe to attack
 % choose the opposite direction wrt the enemy position
@@ -37,7 +49,15 @@ action(attack(Direction)) :- ... .
 %   - next step is in the direction towards the enemy
 %   - define the opposite direction wrt the next step one
 %   - the opposite direction is a safe direction
-action(run(OppositeDirection)) :- ... .
+action(run(OppositeDirection)) :- (
+    position(agent, _, RA, CA),
+    position(_, enemy, RE, CE),
+    is_close(RA, CA, RE, CE),
+    \+ healthy(agent),
+    next_step(RA, CA, RE, CE, Direction),
+    opposite(OppositeDirection, Direction),
+    safe_direction(RA, CA, OppositeDirection, OppositeDirection)
+).
 
 % if not wielded, go towards the weapon available in the map
 % Requirements:
@@ -49,18 +69,33 @@ action(run(OppositeDirection)) :- ... .
 %   - the weapon is at a given position
 %   - next step is in the direction towards the weapon
 %   - the next step direction is safe
-action(get_to_weapon(Direction)) :- ... .
+action(get_to_weapon(Direction)) :- (
+    position(agent, _, RA, CA),
+    position(E, enemy, RE, CE),
+    is_close(RA, CA, RE, CE),
+    wields_weapon(agent, W),
+    \+ is_beatable(E, W),
+    position(_, weapon, RW, CW),
+    next_step(RA, CA, RW, CW, Direction),
+    safe_direction(RA, CA, Direction, Direction)
+).
 
 % pick up an object
 % Requirements:
 %   - agent is stepping on a generic object (hint: you can use 'ObjClass' and ignore the name of the object)
 %   - the class of object is pickable
-action(pick) :- ... .
+action(pick) :- (
+    stepping_on(agent, ObjClass, _),
+    is_pickable(ObjClass)
+).
 
 % if the agent has a weapon, wield it
 % Requirements:
 %   - agent has a weapon with a given name ('Weapon')
-action(wield(Weapon)) :- ... .
+action(wield(Weapon)) :- (
+    has(agent, weapon, Weapon),
+    \+ wields_weapon(agent, _)
+).
 
 % If you cannot apply previous rules, just go towards the goal
 % get the next movement to get closer to the goal
@@ -69,7 +104,12 @@ action(wield(Weapon)) :- ... .
 %   - the comestible apple must be at a certain position
 %   - next step is towards the apple
 %   - next step direction is a safe direction
-action(move(Direction)) :- ... .
+action(move(Direction)) :- (
+    position(agent, _, RA, CA),
+    position(apple, comestible, RG, CG),
+    next_step(RA, CA, RG, CG, Direction),
+    safe_direction(RA, CA, Direction, Direction) 
+).
 
 % If the apple is not visible on the map - e.g. the enemy took it
 % Try to kill it, if beatable
@@ -81,7 +121,15 @@ action(move(Direction)) :- ... .
 %   - enemy is beatable with the weapon
 %   - next step is towards the enemy
 %   - next step direction is a safe direction
-action(move_towards_enemy(Direction)) :- ... .
+action(move_towards_enemy(Direction)) :- (
+    \+ position(apple, _, RG, CG),
+    position(agent, _, RA, CA),
+    position(E, enemy, RE, CE),
+    wields_weapon(agent, W),
+    is_beatable(E, W),
+    next_step(RA, CA, RE, CE, Direction),
+    safe_direction(RA, CA, Direction, Direction)
+).
 
 % If not beatable, go towards the weapon
 % Requirements:
@@ -93,7 +141,16 @@ action(move_towards_enemy(Direction)) :- ... .
 %   - weapon must be at a certain position
 %   - next step is towards the weapon
 %   - next step direction is a safe direction
-action(get_to_weapon(Direction)) :- ... .
+action(get_to_weapon(Direction)) :- (
+    \+ position(apple, _, RG, CG),
+    position(agent, _, RA, CA),
+    position(E, enemy, RE, CE),
+    wields_weapon(agent, W),
+    \+ is_beatable(E, W),
+    position(_, weapon, RW, CW),
+    next_step(RA, CA, RW, CW, Direction),
+    safe_direction(RA, CA, Direction, Direction)
+).
 
 % -----------------------------------------------------------------------------------------------
 
@@ -133,9 +190,9 @@ safe_direction(R, C, D, Direction) :- resulting_position(R, C, NewR, NewC, D),
                                       ).
 
 % a square is unsafe if there is a trap or an enemy
-unsafe_position(R, C) :- position(trap, _, R, C).
-unsafe_position(R, C) :- position(enemy, _, R, C).
-unsafe_position(R, C) :- position(enemy, _, ER, EC), is_close(ER, EC, R, C).
+unsafe_position(R, C) :- position(_, trap, R, C).
+unsafe_position(R, C) :- position(_, enemy, R, C).
+unsafe_position(R, C) :- position(_, enemy, ER, EC), is_close(ER, EC, R, C).
 
 
 

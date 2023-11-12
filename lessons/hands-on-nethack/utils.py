@@ -60,15 +60,15 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
                 obj = bytes(obs['screen_descriptions'][i][j]).decode('utf-8').rstrip('\x00')
                 if 'apple' in obj:
                     # agent has found a comestible apple at a given position
-                    kb.asserta(f'position(apple, _, {i}, {j})')
+                    kb.asserta(f'position(apple, comestible, {i}, {j})')
                 elif monster == obj:
                     # an enemy, named 'monster' (remove possible spaces from name), is at a given position
-                    kb.asserta(f'position({monster.replace(' ', '')}, _, {i}, {j})')
+                    kb.asserta(f'position({monster.replace(" ", "")}, enemy, {i}, {j})')
                 elif 'corpse' in obj:
-                    kb.asserta(f'position(trap, _, {i}, {j})')
+                    kb.asserta(f'position(_, trap, {i}, {j})')
                 elif 'sword' in obj:
                     # a weapon, named 'weapon', is at a given position
-                    kb.asserta(f'position({weapon.replace(' ', '')}, _, {i}, {j})')
+                    kb.asserta(f'position({weapon.replace(" ", "")}, weapon, {i}, {j})')
 
     kb.retractall("wields_weapon(_,_)")
     kb.retractall("has(agent,_,_)")    
@@ -95,7 +95,7 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
             kb.asserta(f'stepping_on(agent, comestible, apple)')
         if 'sword' in message:
             # agent is stepping on a weapon called 'weapon'
-            kb.asserta(f'stepping_on(agent, weapon, {weapon.replace(' ', '')})')
+            kb.asserta(f'stepping_on(agent, weapon, {weapon.replace(" ", "")})')
 
     for m in message.split('.'):
         if 'picks' in m:
