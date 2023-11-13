@@ -60,15 +60,15 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
                 obj = bytes(obs['screen_descriptions'][i][j]).decode('utf-8').rstrip('\x00')
                 if 'apple' in obj:
                     # agent has found a comestible apple at a given position
-                    kb.asserta(f'position(apple, comestible, {i}, {j})')
+                    kb.asserta(f'position(comestible, apple, {i}, {j})')            #riguardare
                 elif monster == obj:
                     # an enemy, named 'monster' (remove possible spaces from name), is at a given position
-                    kb.asserta(f'position({monster.replace(" ", "")}, enemy, {i}, {j})')
+                    kb.asserta(f'position(enemy, {monster.replace(" ", "")}, {i}, {j})')
                 elif 'corpse' in obj:
-                    kb.asserta(f'position(_, trap, {i}, {j})')
+                    kb.asserta(f'position(trap, _, {i}, {j})')
                 elif 'sword' in obj:
                     # a weapon, named 'weapon', is at a given position
-                    kb.asserta(f'position({weapon.replace(" ", "")}, weapon, {i}, {j})')
+                    kb.asserta(f'position(weapon, {weapon.replace(" ", "")}, {i}, {j})')
 
     kb.retractall("wields_weapon(_,_)")
     kb.retractall("has(agent,_,_)")    

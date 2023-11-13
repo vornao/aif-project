@@ -28,7 +28,7 @@ action(eat) :- has(agent, comestible, apple).
 action(attack(Direction)) :- 
 (   
     position(agent, _, RA, CA),
-    position(E, enemy, RE, CE),
+    position(enemy, E, RE, CE),
     wields_weapon(agent, W),
     is_beatable(E, W),
     is_close(RA, CA, RE, CE),
@@ -51,7 +51,7 @@ action(attack(Direction)) :-
 %   - the opposite direction is a safe direction
 action(run(OppositeDirection)) :- (
     position(agent, _, RA, CA),
-    position(_, enemy, RE, CE),
+    position(enemy, _, RE, CE),
     is_close(RA, CA, RE, CE),
     \+ healthy(agent),
     next_step(RA, CA, RE, CE, Direction),
@@ -71,11 +71,11 @@ action(run(OppositeDirection)) :- (
 %   - the next step direction is safe
 action(get_to_weapon(Direction)) :- (
     position(agent, _, RA, CA),
-    position(E, enemy, RE, CE),
+    position(enemy, E, RE, CE),
     is_close(RA, CA, RE, CE),
     wields_weapon(agent, W),
     \+ is_beatable(E, W),
-    position(_, weapon, RW, CW),
+    position(weapon, _, RW, CW),
     next_step(RA, CA, RW, CW, Direction),
     safe_direction(RA, CA, Direction, Direction)
 ).
@@ -106,7 +106,7 @@ action(wield(Weapon)) :- (
 %   - next step direction is a safe direction
 action(move(Direction)) :- (
     position(agent, _, RA, CA),
-    position(apple, comestible, RG, CG),
+    position(comestible, apple, RG, CG),        %riguardare
     next_step(RA, CA, RG, CG, Direction),
     safe_direction(RA, CA, Direction, Direction) 
 ).
@@ -122,9 +122,9 @@ action(move(Direction)) :- (
 %   - next step is towards the enemy
 %   - next step direction is a safe direction
 action(move_towards_enemy(Direction)) :- (
-    \+ position(apple, _, RG, CG),
+    \+ position(_, apple, RG, CG),              %riguardare
     position(agent, _, RA, CA),
-    position(E, enemy, RE, CE),
+    position(enemy, E, RE, CE),
     wields_weapon(agent, W),
     is_beatable(E, W),
     next_step(RA, CA, RE, CE, Direction),
@@ -142,12 +142,12 @@ action(move_towards_enemy(Direction)) :- (
 %   - next step is towards the weapon
 %   - next step direction is a safe direction
 action(get_to_weapon(Direction)) :- (
-    \+ position(apple, _, RG, CG),
+    \+ position(apple, _, RG, CG),          %riguardare
     position(agent, _, RA, CA),
-    position(E, enemy, RE, CE),
+    position(enemy, E, RE, CE),
     wields_weapon(agent, W),
     \+ is_beatable(E, W),
-    position(_, weapon, RW, CW),
+    position(weapon, _, RW, CW),
     next_step(RA, CA, RW, CW, Direction),
     safe_direction(RA, CA, Direction, Direction)
 ).
@@ -190,9 +190,9 @@ safe_direction(R, C, D, Direction) :- resulting_position(R, C, NewR, NewC, D),
                                       ).
 
 % a square is unsafe if there is a trap or an enemy
-unsafe_position(R, C) :- position(_, trap, R, C).
-unsafe_position(R, C) :- position(_, enemy, R, C).
-unsafe_position(R, C) :- position(_, enemy, ER, EC), is_close(ER, EC, R, C).
+unsafe_position(R, C) :- position(trap, _, R, C).
+unsafe_position(R, C) :- position(enemy, _, R, C).
+unsafe_position(R, C) :- position(enemy, _, ER, EC), is_close(ER, EC, R, C).
 
 
 
