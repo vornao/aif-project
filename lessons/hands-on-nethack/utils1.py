@@ -59,13 +59,16 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
             if not (obs['screen_descriptions'][i][j] == 0).all():
                 obj = bytes(obs['screen_descriptions'][i][j]).decode('utf-8').rstrip('\x00')
                 if 'apple' in obj:
-                    kb.asserta(f'position(comestible, apple, {i}, {j})')
+                    # agent has found a comestible apple at a given position
+                    kb.asserta(f'position(comestible, apple, {i}, {j})')            #riguardare
                 elif monster == obj:
+                    # an enemy, named 'monster' (remove possible spaces from name), is at a given position
                     kb.asserta(f'position(enemy, {monster.replace(" ", "")}, {i}, {j})')
                 elif 'corpse' in obj:
                     kb.asserta(f'position(trap, _, {i}, {j})')
                 elif 'sword' in obj:
-                    kb.asserta(f'position(weapon, {weapon}, {i}, {j})')
+                    # a weapon, named 'weapon', is at a given position
+                    kb.asserta(f'position(weapon, {weapon.replace(" ", "")}, {i}, {j})')
 
     kb.retractall("wields_weapon(_,_)")
     kb.retractall("has(agent,_,_)")    
@@ -74,9 +77,11 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
         if 'weapon in hand' in obj:
             # the actual name of the weapon is in position 2
             wp = obj.split()[2]
+            # agent is wielding the weapon 'wp'
             kb.asserta(f'wields_weapon(agent, {wp})')
         if 'apple' in obj:
-            kb.asserta('has(agent, comestible, apple)')
+            # agent has a comestible apple
+            kb.asserta(f'has(agent, comestible, apple)')
 
     kb.retractall("position(agent,_,_,_)")
     kb.retractall("health(_)")
@@ -86,15 +91,17 @@ def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):
     message = bytes(obs['message']).decode('utf-8').rstrip('\x00')
     if 'You see here' in message:
         if 'apple' in message:
-            kb.asserta('stepping_on(agent, comestible, apple)')
+            # agent is stepping on a comestible apple
+            kb.asserta(f'stepping_on(agent, comestible, apple)')
         if 'sword' in message:
-            kb.asserta(f'stepping_on(agent, weapon, {weapon})')
+            # agent is stepping on a weapon called 'weapon'
+            kb.asserta(f'stepping_on(agent, weapon, {weapon.replace(" ", "")})')
 
     for m in message.split('.'):
         if 'picks' in m:
             if 'apple' in m:
                 print('The enemy took your apple!')
-
+                
 # indexes for showing the image are hard-coded
 def show_match(states: list):
     image = plt.imshow(states[0][115:275, 480:750])
