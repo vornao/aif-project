@@ -7,6 +7,12 @@ def get_player_location(game_map: np.ndarray, symbol : str = "@") -> Tuple[int, 
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
 
+# defined by us
+def get_player_location1(game_map: np.ndarray, symbol : str = "@") -> 'ciao':
+    x, y = np.where(game_map == ord(symbol))
+    return (x, y)
+#
+
 def get_target_location(game_map: np.ndarray, symbol : str = ">") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
@@ -45,11 +51,11 @@ def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> Li
     x_s, y_s = start
     for (x, y) in path:
         if x_s == x:
-            if y_s > y:
+            if y_s > y: # we recall that we are in a matrix, therefore going West the column decreases
                 actions.append(action_map["W"])
             else: actions.append(action_map["E"])
         elif y_s == y:
-            if x_s > x:
+            if x_s > x: # we recall that we are in a matrix, therefore going North the row decreases
                 actions.append(action_map["N"])
             else: actions.append(action_map["S"])
         else:
