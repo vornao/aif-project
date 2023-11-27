@@ -48,7 +48,7 @@ def perform_action(action, env):
     elif 'west' in action: action_id = 3
 
     # print(f'Action performed: {repr(env.actions[action_id])}')
-    obs, reward, done, info = env.step(action_id)
+    obs, reward, done, info = env.step(action_id) #N.B. env.step() dice di compiere quell'azione, non per forza c'entra con i passi
     return obs, reward, done, info
 
 def process_state(obs: dict, kb: Prolog, monster: str, weapon: str):

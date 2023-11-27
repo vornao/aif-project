@@ -32,7 +32,7 @@ action(attack(Direction)) :-
     wields_weapon(agent, W),
     is_beatable(E, W),
     is_close(RA, CA, RE, CE),
-    healthy(agent),
+    healthy,
     next_step(RA, CA, RE, CE, Direction)
 ).
 % RE, CE is the position of the Enemy
@@ -53,7 +53,7 @@ action(run(OppositeDirection)) :- (
     position(agent, _, RA, CA),
     position(enemy, _, RE, CE),
     is_close(RA, CA, RE, CE),
-    \+ healthy(agent),
+    \+ healthy,
     next_step(RA, CA, RE, CE, Direction),
     opposite(OppositeDirection, Direction),
     safe_direction(RA, CA, OppositeDirection, OppositeDirection)
@@ -106,7 +106,7 @@ action(wield(Weapon)) :- (
 %   - next step direction is a safe direction
 action(move(Direction)) :- (
     position(agent, _, RA, CA),
-    position(comestible, apple, RG, CG),        %riguardare
+    position(comestible, apple, RG, CG),       
     next_step(RA, CA, RG, CG, Direction),
     safe_direction(RA, CA, Direction, Direction) 
 ).
@@ -122,7 +122,7 @@ action(move(Direction)) :- (
 %   - next step is towards the enemy
 %   - next step direction is a safe direction
 action(move_towards_enemy(Direction)) :- (
-    \+ position(_, apple, RG, CG),              %riguardare
+    \+ position(comestible, apple,_,_),              
     position(agent, _, RA, CA),
     position(enemy, E, RE, CE),
     wields_weapon(agent, W),
@@ -142,7 +142,7 @@ action(move_towards_enemy(Direction)) :- (
 %   - next step is towards the weapon
 %   - next step direction is a safe direction
 action(get_to_weapon(Direction)) :- (
-    \+ position(apple, _, RG, CG),          %riguardare
+    \+ position(comestible, apple, _, _),          
     position(agent, _, RA, CA),
     position(enemy, E, RE, CE),
     wields_weapon(agent, W),
