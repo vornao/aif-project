@@ -40,6 +40,29 @@ def get_valid_moves(game_map: np.ndarray, current_position: Tuple[int, int]) -> 
 
     return valid
 
+# ---------------------------------------------
+# defined by us
+
+def get_valid_actions(game_map: np.ndarray, current_position: Tuple[int, int]) -> List[int]:
+    x_limit, y_limit = game_map.shape
+    valid = []
+    x, y = current_position    
+    # North
+    if y - 1 > 0 and not is_wall(game_map[x, y-1]):
+        valid.append(0) 
+    # East
+    if x + 1 < x_limit and not is_wall(game_map[x+1, y]):
+        valid.append(1) 
+    # South
+    if y + 1 < y_limit and not is_wall(game_map[x, y+1]):
+        valid.append(2) 
+    # West
+    if x - 1 > 0 and not is_wall(game_map[x-1, y]):
+        valid.append(3)
+
+    return valid
+
+
 def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> List[int]:
     action_map = {
         "N": 0,
