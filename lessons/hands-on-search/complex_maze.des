@@ -27,4 +27,5 @@ MAP
 ENDMAP
 
 STAIR:(37, 13),down
+
 BRANCH: (3,13,3,13),(4,14,4,14)
