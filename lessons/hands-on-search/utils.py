@@ -62,8 +62,26 @@ def get_valid_actions(game_map: np.ndarray, current_position: Tuple[int, int]) -
 
     return valid
 
+# ---------------------------------------------
 
-def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> List[int]:
+"""def direction_from_actions(action: List[Tuple[int, int]]) -> list(int):
+    directions = []
+    for i in range(len(action)):
+        if action[i][0] == 0 and action[i][1] == -1:
+            directions.append(0)
+        elif action[i][0] == 1 and action[i][1] == 0:
+            directions.append(1)
+        elif action[i][0] == 0 and action[i][1] == 1:
+            directions.append(2)
+        elif action[i][0] == -1 and action[i][1] == 0:
+            directions.append(3)
+    return directions"""
+   
+
+
+
+
+def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> list[int]:
     action_map = {
         "N": 0,
         "E": 1,
@@ -88,7 +106,8 @@ def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> Li
     
     return actions
 
-def path_from_actions(start: Tuple[int, int], actions: List[int]) -> List[Tuple[int, int]]:
+def path_from_actions(game_map: np.ndarray, start: Tuple[int, int], actions: List[int]) -> List[Tuple[int, int]]:
+    wrong = 0
     action_map = {
         "N": 0,
         "E": 1,
@@ -99,13 +118,25 @@ def path_from_actions(start: Tuple[int, int], actions: List[int]) -> List[Tuple[
     x, y = start
     for action in actions:
         if action == action_map["N"]:
-            x -= 1
+            if is_wall(game_map[x-1, y]):
+                wrong += 1
+            else:
+                x -= 1
         elif action == action_map["E"]:
-            y += 1
+            if is_wall(game_map[x, y+1]):
+                wrong += 1
+            else:
+                y += 1
         elif action == action_map["S"]:
-            x += 1
+            if is_wall(game_map[x+1, y]):
+                wrong += 1
+            else:
+                x += 1
         elif action == action_map["W"]:
-            y -= 1
+            if is_wall(game_map[x, y-1]):
+                wrong += 1
+            else:
+                y -= 1
         else:
             raise Exception("Invalid action!")
         path.append((x, y))
