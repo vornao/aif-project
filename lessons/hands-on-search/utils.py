@@ -65,6 +65,29 @@ def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> Li
     
     return actions
 
+def path_from_actions(start: Tuple[int, int], actions: List[int]) -> List[Tuple[int, int]]:
+    action_map = {
+        "N": 0,
+        "E": 1,
+        "S": 2,
+        "W": 3
+    }
+    path = []
+    x, y = start
+    for action in actions:
+        if action == action_map["N"]:
+            x -= 1
+        elif action == action_map["E"]:
+            y += 1
+        elif action == action_map["S"]:
+            x += 1
+        elif action == action_map["W"]:
+            y -= 1
+        else:
+            raise Exception("Invalid action!")
+        path.append((x, y))
+    return path
+
 def euclidean_distance(point1: Tuple[int, int], point2: Tuple[int, int]) -> float:
     x1, y1 = point1
     x2, y2 = point2
