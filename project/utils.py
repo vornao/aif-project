@@ -149,7 +149,7 @@ def path_from_actions(game_map: np.ndarray, start: Tuple[int, int], actions: Lis
         else:
             raise Exception("Invalid action!")
         path.append((x, y))
-    return path
+    return path, wrong
 
 # ---------------------------------------------
 # path len return the position of the first occurence of the target in the path

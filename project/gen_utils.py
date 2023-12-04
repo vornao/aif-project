@@ -20,10 +20,10 @@ def mutate(actions, mutation_rate=0.05):
 
 #fitness_function = lambda path: abs(path[-1][0] - target[0]) + abs(path[-1][1] - target[1])
 
-def fitness_function(path, game_map, target):
-    """Calculate the fitness of a path"""
-    # calculate the fitness of the path
-    if path.intersection(target) != set():
+def fitness_function(path, wrong_steps, map):
+    # check if path contains the target in any position
+    if map.target in path:
+        # if so, return the position of the first occurence of the target
         return 0
-    return abs(path[-1][0] - target[0]) + abs(path[-1][1] - target[1])
+    return abs(path[-1][0] - map.target[0]) + abs(path[-1][1] - map.target[1]) + wrong_steps
 
