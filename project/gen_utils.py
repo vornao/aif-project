@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import math
 
 
 def crossover(actions1, actions2):
