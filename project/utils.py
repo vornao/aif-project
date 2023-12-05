@@ -210,3 +210,18 @@ def random_nsteps(game_map: np.ndarray, start: Tuple[int, int], target: Tuple[in
 
 def random_nactions(actions = 100):
     return random.choices([0, 1, 2, 3], k = actions)
+
+# ---------------------------------------------
+
+def valid_actions_bitmap(start, path):
+    prev = path[0]     
+    bitmap = [0 if prev == start else 1]
+
+    for i in path[1:]:
+        if prev == i:
+            bitmap.append(0)
+        else:
+            bitmap.append(1)
+        prev = i
+    return bitmap
+
