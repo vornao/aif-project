@@ -13,7 +13,7 @@ def crossover(actions1, actions2):
 def mutate(actions, bitmap, mutation_rate=0.05):
     """Mutate a path"""
     # randomly select n postions to mutate
-    idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/10))
+    idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
     # randomly select new actions for each position and replace
     for idx in idxs:
         actions[idx] = random.choice([0, 1, 2, 3])
@@ -26,5 +26,5 @@ def fitness_function(path, wrong_steps, map):
     if map.target in path:
         # if so, return the position of the first occurence of the target
         return 0
-    return abs(path[-1][0] - map.target[0]) + abs(path[-1][1] - map.target[1]) 
+    return abs(path[-1][0] - map.target[0]) + abs(path[-1][1] - map.target[1]) + wrong_steps/10
 

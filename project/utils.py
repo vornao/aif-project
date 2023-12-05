@@ -225,3 +225,15 @@ def valid_actions_bitmap(start, path):
         prev = i
     return bitmap
 
+def count_loops(path):
+    loops = 0
+    for i in range(1, len(path) - 1):
+        if is_loop(path, i):
+            loops += 1
+    return loops
+
+def is_loop(path, index):
+    current_location = path[index]
+    previous_locations = path[:index - 1]
+    return current_location in previous_locations
+
