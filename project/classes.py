@@ -1,4 +1,4 @@
-from utils import random_nsteps, actions_from_path, path_from_actions, is_wall, valid_actions_bitmap, count_loops
+from utils import random_nsteps, actions_from_path, wrong_actions, path_from_actions, is_wall, valid_actions_bitmap, count_loops
 from gen_utils import fitness_function
 
 class Map:
@@ -6,7 +6,7 @@ class Map:
         self.map = map
         self.start = start
         self.target = target
-        # generate a matrix with the same size of the map where each cell is 0 if it is a wall and 1 otherwise
+        # generate a matrix with the same size of the map where each cell is 1 if it is a wall and 0 otherwise
         self.map_matrix = [[1 if is_wall(cell) else 0 for cell in row] for row in self.map]
 
     def __str__(self):
@@ -20,7 +20,7 @@ class Path:
         self.game_map = game_map
         self.start = start
         self.target = target
-        self.actions = actions_from_path(self.start, self.path)
+        self.actions = actions_from_path(self.start, self.path) # cosa succede se il path ha due posizioni uguali di fila?
     
     def __str__(self):
         return f'Path: {self.path}\nActions: {self.actions}'
@@ -28,9 +28,10 @@ class Path:
 class Individual:
     def __init__(self, actions, generation: int, map: Map):
         self.actions = actions
-        self.path, self.wrong_actions = path_from_actions(map.map, map.start, self.actions)
-        self.fitness = fitness_function(self.path, self.wrong_actions, map)
         self.generation = generation
+        self.path= path_from_actions(map.map, map.start, self.actions)
+        self.wrong_actions = wrong_actions(self.path)
+        self.fitness = fitness_function(self.path, self.generation, map)
         self.valid_actions_bitmap = valid_actions_bitmap(map.start, self.path)
         self.loops = count_loops(self.path)
 

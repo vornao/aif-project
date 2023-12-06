@@ -116,7 +116,6 @@ def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> li
 
 
 def path_from_actions(game_map: np.ndarray, start: Tuple[int, int], actions: List[int]) -> List[Tuple[int, int]]:
-    wrong = 0
     action_map = {
         "N": 0,
         "E": 1,
@@ -127,29 +126,28 @@ def path_from_actions(game_map: np.ndarray, start: Tuple[int, int], actions: Lis
     x, y = start
     for action in actions:
         if action == action_map["N"]:
-            if is_wall(game_map[x-1, y]):
-                wrong += 1
-            else:
+            if not is_wall(game_map[x-1, y]):
                 x -= 1
         elif action == action_map["E"]:
-            if is_wall(game_map[x, y+1]):
-                wrong += 1
-            else:
+            if not is_wall(game_map[x, y+1]):
                 y += 1
         elif action == action_map["S"]:
-            if is_wall(game_map[x+1, y]):
-                wrong += 1
-            else:
+            if not is_wall(game_map[x+1, y]):
                 x += 1
         elif action == action_map["W"]:
-            if is_wall(game_map[x, y-1]):
-                wrong += 1
-            else:
+            if not is_wall(game_map[x, y-1]):
                 y -= 1
         else:
             raise Exception("Invalid action!")
         path.append((x, y))
-    return path, wrong
+    return path
+
+def wrong_actions(path) -> int:
+    wrong = 0
+    for i in range(1, len(path)):
+        if path[i] == path[i-1]:
+            wrong += 1
+    return wrong
 
 # ---------------------------------------------
 # path len return the position of the first occurence of the target in the path
@@ -236,4 +234,16 @@ def is_loop(path, index):
     current_location = path[index]
     previous_locations = path[:index - 1]
     return current_location in previous_locations
+
+def count_dead_ends(path):
+    dead_ends = 0
+    for i in range(1, len(path) - 1):
+        if is_dead_end(path, i):
+            dead_ends += 1
+    return dead_ends
+
+def is_dead_end(path, index):
+    current_location = path[index]
+    neighbors = [path[index - 1], path[index + 1]]
+    return neighbors.count(current_location) == 2
 
