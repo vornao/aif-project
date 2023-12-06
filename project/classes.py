@@ -1,4 +1,4 @@
-from utils import random_nsteps, actions_from_path, path_from_actions, is_wall, valid_actions_bitmap
+from utils import random_nsteps, actions_from_path, path_from_actions, is_wall, valid_actions_bitmap, count_loops
 from gen_utils import fitness_function
 
 class Map:
@@ -32,6 +32,7 @@ class Individual:
         self.fitness = fitness_function(self.path, self.wrong_actions, map)
         self.generation = generation
         self.valid_actions_bitmap = valid_actions_bitmap(map.start, self.path)
+        self.loops = count_loops(self.path)
 
     def __str__(self):
         return f'{self.path}\nFitness: {self.fitness}\nGeneration: {self.generation}\nWrong actions: {self.wrong_actions}'
