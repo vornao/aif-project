@@ -43,6 +43,7 @@ def fitness_function(path, generation, map):
         # if so, return the position of the first occurence of the target
         bonus = 1000 # very high value to make sure that this path is selected
         path = path[:path.index(map.target) + 1] # we are not interested in the moves after the target is reached
+    #TODO: (exponential) decay for generation
     if generation < 25:
         dead_ends = -50 * count_dead_ends(path)
         loops = -20 * count_loops(path)
