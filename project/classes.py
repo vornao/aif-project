@@ -76,6 +76,20 @@ class Individual:
         self.fitness = fitness_function(self, game_map)
         self.wrong_actions = self.path.wrong_actions
 
+        self.won = game_map.target in self.path.path
+        self.last_position = self.get_target_index()
+        self.distance = self.get_target_distance()
+
+    def get_target_index(self):
+        if self.won:
+            return self.path.path.index(self.path.target)
+        return self.path.path[-1]
+    
+    def get_target_distance(self):
+        if self.won:
+            return 0
+        return abs(self.last_position[0] - self.path.target[0]) + abs(self.last_position[1] - self.path.target[1])
+    
     def __str__(self):
         return f"{self.path}\nFitness: {self.fitness}\nGeneration: {self.generation}\nWrong actions: {self.path.wrong_actions}"
 
@@ -121,11 +135,13 @@ def sigmoid(x):
 def fitness_function(individual: Individual, map: Map):
     bonus = 1
     path: Path = individual.path.copy()
+    target_index = -301
 
     # check if path contains the target in any position
     if map.target in individual.path.path:
-        # if so, return the position of the first occurence of the target
-        bonus=3# we are not interested in the moves after the target is reached
+        bonus = 3# we are not interested in the moves after the target is reached
+        path.path = path.path[: path.path.index(map.target) + 1]
+        target_index = -path.path.index(map.target)
 
     # TODO: (exponential) decay for generation
     """
@@ -138,11 +154,21 @@ def fitness_function(individual: Individual, map: Map):
         wrong = -1 * path.wrong_actions if distance > -50 else 0
     """
     #else:
-    distance = -1 * (
+    distance = -5 * (
         abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
     )
-    dead_ends = -1 * path.dead_ends if distance < -50 else 0
-    loops = -1 * path.loops if distance < -50 else 0
-    wrong = -1 * path.wrong_actions if distance < -50 else 0
+    #dead_ends = -1 * path.dead_ends if distance < -10 else 0
+    loops = -1 * path.loops #if distance < -10 else 0
+    wrong = -1 * path.wrong_actions #if distance < -10 else 0
 
-    return (distance + wrong + loops + dead_ends)
+    return (distance + wrong + loops + target_index)
+
+
+"""distance = -1 * (
+        abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
+    )
+    dead_ends = -1 * path.dead_ends if distance < -10 else 0
+    loops = -1 * path.loops if distance < -10 else 0
+    wrong = -1 * path.wrong_actions if distance < -10 else 0
+
+    return (distance + wrong + loops + dead_ends)/bonus"""
