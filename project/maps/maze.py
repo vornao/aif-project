@@ -4,6 +4,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class Maze:
     def __init__(self, size):
         self.size = size
@@ -26,10 +27,12 @@ class Maze:
     def __str__(self):
         return str(self.maze)
 
+
 def print_maze(maze):
-    plt.imshow(maze.maze, cmap='binary')
+    plt.imshow(maze.maze, cmap="binary")
     plt.xticks([]), plt.yticks([])
     plt.show()
+
 
 # Define constants
 POPULATION_SIZE = 100
@@ -37,25 +40,28 @@ MUTATION_RATE = 0.1
 MAX_GENERATIONS = 100
 
 # Define possible actions (genes)
-ACTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT']
+ACTIONS = ["UP", "DOWN", "LEFT", "RIGHT"]
+
 
 def fitness(individual):
     x, y = 0, 0  # Initial position
     for action in individual:
-        if action == 'UP' and x > 0 and maze[x - 1][y] == 0:
+        if action == "UP" and x > 0 and maze[x - 1][y] == 0:
             x -= 1
-        elif action == 'DOWN' and x < len(maze) - 1 and maze[x + 1][y] == 0:
+        elif action == "DOWN" and x < len(maze) - 1 and maze[x + 1][y] == 0:
             x += 1
-        elif action == 'LEFT' and y > 0 and maze[x][y - 1] == 0:
+        elif action == "LEFT" and y > 0 and maze[x][y - 1] == 0:
             y -= 1
-        elif action == 'RIGHT' and y < len(maze[0]) - 1 and maze[x][y + 1] == 0:
+        elif action == "RIGHT" and y < len(maze[0]) - 1 and maze[x][y + 1] == 0:
             y += 1
-            
+
     distance_to_exit = abs(x - len(maze) + 1) + abs(y - len(maze[0]) + 1)
     return 1 / (distance_to_exit + 1)
 
+
 def create_individual():
     return [random.choice(ACTIONS) for _ in range(5 * 5)]  # Size of the maze
+
 
 def crossover(parent1, parent2):
     """Perform crossover to create a new individual."""
@@ -63,12 +69,14 @@ def crossover(parent1, parent2):
     child = parent1[:crossover_point] + parent2[crossover_point:]
     return child
 
+
 def mutate(individual):
     """Perform mutation on an individual."""
     for i in range(len(individual)):
         if random.random() < MUTATION_RATE:
             individual[i] = random.choice(ACTIONS)
     return individual
+
 
 # Print the initial maze
 print("Initial Maze:")
@@ -97,13 +105,13 @@ print("Best Individual:", best_individual)
 print("\nFinal Maze:")
 x, y = 0, 0
 for action in best_individual:
-    if action == 'UP':
+    if action == "UP":
         x -= 1
-    elif action == 'DOWN':
+    elif action == "DOWN":
         x += 1
-    elif action == 'LEFT':
+    elif action == "LEFT":
         y -= 1
-    elif action == 'RIGHT':
+    elif action == "RIGHT":
         y += 1
-    maze.set_cell(x, y, 'X')  # Mark the path with 'X'
+    maze.set_cell(x, y, "X")  # Mark the path with 'X'
 print_maze(maze)
