@@ -115,16 +115,18 @@ def mutate(actions, bitmap, mutation_rate=0.15):
 
 
 # fitness_function = lambda path: abs(path[-1][0] - target[0]) + abs(path[-1][1] - target[1])
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def exponential_decay(x, a=0.1):
+    return np.exp(-a*abs(x))
 
 
 def fitness_function(individual: Individual, map: Map):
     bonus = 1
     path: Path = individual.path.copy()
 
-    # check if path contains the target in any position
-    if map.target in individual.path.path:
-        # if so, return the position of the first occurence of the target
-        bonus=3# we are not interested in the moves after the target is reached
+
 
     # TODO: (exponential) decay for generation
     """
@@ -140,8 +142,15 @@ def fitness_function(individual: Individual, map: Map):
     distance = -1 * (
         abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
     )
-    dead_ends = -1 * path.dead_ends if distance < -50 else 0
-    loops = -1 * path.loops if distance < -50 else 0
-    wrong = -1 * path.wrong_actions if distance < -50 else 0
+    dead_ends =  -1*path.dead_ends
+    loops =  -1* path.loops 
+    wrong =  -1* path.wrong_actions 
 
-    return (distance + wrong + loops + dead_ends)/bonus
+        # check if path contains the target in any position
+    if map.target in individual.path.path:
+        # if so, return the position of the first occurence of the target
+        bonus=3# we are not interested in the moves after the target is reached
+        return wrong - loops - dead_ends
+    
+    return distance - 0.1*wrong - 0.1*loops - 0.1*dead_ends
+  
