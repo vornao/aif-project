@@ -20,33 +20,35 @@ import random
 
 
 class Map:
-    def __init__(self, map, start, target):
-        self.map = map
+    def __init__(self, game_map, start, target):
+        self.game_map = game_map
         self.start = start
         self.target = target
         # generate a matrix with the same size of the map where each cell is 1 if it is a wall and 0 otherwise
         self.map_matrix = [
-            [1 if is_wall(cell) else 0 for cell in row] for row in self.map
+            [1 if is_wall(cell) else 0 for cell in row] for row in self.game_map
         ]
 
     def __str__(self):
-        return f"Map: {self.map}\nStart: {self.start}\nTarget: {self.target}"
+        return f"Map: {self.game_map}\nStart: {self.start}\nTarget: {self.target}"
+    
+    def copy(self):
+        return Map(self.game_map.copy(), self.start.copy(), self.target.copy())
 
 
 class Path:
-    def __init__(self, path, game_map, start, target):
+    def __init__(self, path, game_map: Map):
         if path is None:
-            self.path = random_nsteps(game_map, start, target)
+            self.path = random_nsteps(game_map.game_map, game_map.start, game_map.target)
 
         self.path = path
         self.game_map = game_map
-        self.start = start
-        self.target = target
         self.actions = actions_from_path(
-            self.start, self.path
+            self.game_map.start, 
+            self.path
         )  # cosa succede se il path ha due posizioni uguali di fila?
         self.loops = count_loops(self.path)
-        self.valid_actions_bitmap = valid_actions_bitmap(self.start, self.path)
+        self.valid_actions_bitmap = valid_actions_bitmap(self.game_map.start, self.path)
         self.wrong_actions = wrong_actions(self.path)
         self.dead_ends = count_dead_ends(self.path)
 
@@ -57,7 +59,7 @@ class Path:
         return self.path[index]
     
     def copy(self):
-        return Path(self.path.copy(), self.game_map, self.start, self.target)
+        return Path(self.path.copy(), self.game_map.copy())
     
 
 
@@ -67,16 +69,15 @@ class Individual:
             raise ValueError("actions cannot be None")
         self.actions = actions
         self.generation = generation
+        self.game_map = game_map
         self.path = Path(
-            path_from_actions(game_map.map, game_map.start, self.actions),
-            game_map.map,
-            game_map.start,
-            game_map.target,
+            path_from_actions(self.game_map.game_map, self.game_map.start, self.actions),
+            self.game_map.game_map
         )
-        self.fitness = fitness_function(self, game_map)
+        self.fitness = fitness_function(self, self.game_map)
         self.wrong_actions = self.path.wrong_actions
 
-        self.won = game_map.target in self.path.path
+        self.won = self.game_map.target in self.path.path
         self.last_position = self.get_target_index()
         self.distance = self.get_target_distance()
 
@@ -132,22 +133,22 @@ def mutate(actions, bitmap, mutation_rate=0.15):
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-def fitness_function(individual: Individual, map: Map):
+def fitness_function(individual: Individual, game_map: Map):
     bonus = 1
     path: Path = individual.path.copy()
     target_index = -301
 
     # check if path contains the target in any position
-    if map.target in individual.path.path:
+    if game_map.target in individual.path.path:
         bonus = 3# we are not interested in the moves after the target is reached
-        path.path = path.path[: path.path.index(map.target) + 1]
-        target_index = -path.path.index(map.target)
+        path.path = path.path[: path.path.index(game_map.target) + 1]
+        target_index = -path.path.index(game_map.target)
 
     # TODO: (exponential) decay for generation
     """
     if individual.generation < 25:
         distance = -1 * (
-            abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
+            abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
         )
         dead_ends = -1 * path.dead_ends if distance > -50 else 0
         loops = -1 * path.loops if distance > -50 else 0
@@ -155,7 +156,7 @@ def fitness_function(individual: Individual, map: Map):
     """
     #else:
     distance = -5 * (
-        abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
+        abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
     )
     #dead_ends = -1 * path.dead_ends if distance < -10 else 0
     loops = -1 * path.loops #if distance < -10 else 0
@@ -165,7 +166,7 @@ def fitness_function(individual: Individual, map: Map):
 
 
 """distance = -1 * (
-        abs(path.path[-1][0] - map.target[0]) + abs(path.path[-1][1] - map.target[1])
+        abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
     )
     dead_ends = -1 * path.dead_ends if distance < -10 else 0
     loops = -1 * path.loops if distance < -10 else 0
