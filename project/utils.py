@@ -137,16 +137,16 @@ def path_from_actions(
     x, y = start
     for action in actions:
         if action == action_map["N"]:
-            if not is_wall(game_map[x - 1, y]):
+            if x != 0 and not is_wall(game_map[x - 1, y]): 
                 x -= 1
         elif action == action_map["E"]:
-            if not is_wall(game_map[x, y + 1]):
+            if y < game_map.shape[1] and not is_wall(game_map[x, y + 1]):
                 y += 1
         elif action == action_map["S"]:
-            if not is_wall(game_map[x + 1, y]):
+            if x < game_map.shape[0] and not is_wall(game_map[x + 1, y]):
                 x += 1
         elif action == action_map["W"]:
-            if not is_wall(game_map[x, y - 1]):
+            if y != 0 and not is_wall(game_map[x, y - 1]):
                 y -= 1
         else:
             raise Exception("Invalid action!")

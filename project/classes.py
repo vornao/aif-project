@@ -40,20 +40,21 @@ class Path:
     def __init__(self, path, game_map: Map):
         if path is None:
             self.path = random_nsteps(game_map.game_map, game_map.start, game_map.target)
+        else:
+            self.path = path
 
-        self.path = path
         self.game_map = game_map
-        self.actions = actions_from_path(
-            self.game_map.start, 
-            self.path
-        )  # cosa succede se il path ha due posizioni uguali di fila?
+        #self.actions = actions_from_path(
+        #    self.game_map.start, 
+        #    self.path
+        #)  # cosa succede se il path ha due posizioni uguali di fila?
         self.loops = count_loops(self.path)
         self.valid_actions_bitmap = valid_actions_bitmap(self.game_map.start, self.path)
         self.wrong_actions = wrong_actions(self.path)
         self.dead_ends = count_dead_ends(self.path)
 
     def __str__(self):
-        return f"Path: {self.path}\nActions: {self.actions}"
+        return f"Path: {self.path}\n"
     
     def __getitem__(self, index):
         return self.path[index]
@@ -78,18 +79,18 @@ class Individual:
         self.wrong_actions = self.path.wrong_actions
 
         self.won = self.game_map.target in self.path.path
-        self.last_position = self.get_target_index()
+        self.target_index = self.get_target_index()
         self.distance = self.get_target_distance()
 
     def get_target_index(self):
-        if self.won:
-            return self.path.path.index(self.path.target)
-        return self.path.path[-1]
+        if self.won: 
+            return self.path.path.index(self.path.game_map.target)
+        return -1 # if target is not in the path return -1
     
     def get_target_distance(self):
         if self.won:
             return 0
-        return abs(self.last_position[0] - self.game_map.target[0]) + abs(self.last_position[1] - self.game_map.target[1])
+        return abs(self.path[-1][0] - self.game_map.target[0]) + abs(self.path[-1][1] - self.game_map.target[1])
     
     def __str__(self):
         return f"{self.path}\nFitness: {self.fitness}\nGeneration: {self.generation}\nWrong actions: {self.path.wrong_actions}"
