@@ -33,7 +33,7 @@ class Map:
         return f"Map: {self.game_map}\nStart: {self.start}\nTarget: {self.target}"
     
     def copy(self):
-        return Map(self.game_map.copy(), self.start.copy(), self.target.copy())
+        return Map(self.game_map.copy(), self.start, self.target)
 
 
 class Path:
@@ -72,7 +72,7 @@ class Individual:
         self.game_map = game_map
         self.path = Path(
             path_from_actions(self.game_map.game_map, self.game_map.start, self.actions),
-            self.game_map.game_map
+            self.game_map
         )
         self.fitness = fitness_function(self, self.game_map)
         self.wrong_actions = self.path.wrong_actions
@@ -89,7 +89,7 @@ class Individual:
     def get_target_distance(self):
         if self.won:
             return 0
-        return abs(self.last_position[0] - self.path.target[0]) + abs(self.last_position[1] - self.path.target[1])
+        return abs(self.last_position[0] - self.game_map.target[0]) + abs(self.last_position[1] - self.game_map.target[1])
     
     def __str__(self):
         return f"{self.path}\nFitness: {self.fitness}\nGeneration: {self.generation}\nWrong actions: {self.path.wrong_actions}"
