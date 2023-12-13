@@ -4,14 +4,21 @@ import random
 
 from typing import Tuple, List
 
+format_title = 'Generation {}, fitness: {}, position: {}, action: {}, wrong actions: {}, loops: {}, dead ends: {}, step: {}/{}'
+format_loop = 'best_individual in generation {}: fitness: {}, \
+wrong actions: {}, \
+loops: {}, \
+dead_ends: {}, \
+distance: {}'
+
 
 def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
 
 
-# defined by us
-def get_player_location1(game_map: np.ndarray, symbol: str = "@") -> "ciao":
+
+def get_player_location1(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x, y)
 

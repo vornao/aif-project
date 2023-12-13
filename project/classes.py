@@ -117,7 +117,7 @@ def crossover_uniform(actions1, actions2):
     return actions
 
 
-def mutate(actions, bitmap, mutation_rate=0.15):
+def mutate(actions, bitmap, mutation_rate=0.5):
     """
     # randomly select n postions to mutate
     idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
@@ -140,30 +140,21 @@ def fitness_function(individual: Individual, game_map: Map):
     target_index = -301
 
     # check if path contains the target in any position
+    """
     if game_map.target in individual.path.path:
         bonus = 3# we are not interested in the moves after the target is reached
         path.path = path.path[: path.path.index(game_map.target) + 1]
-        target_index = -path.path.index(game_map.target)
+        #target_index = -path.path.index(game_map.target)
+    """
 
-    # TODO: (exponential) decay for generation
-    """
-    if individual.generation < 25:
-        distance = -1 * (
-            abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
-        )
-        dead_ends = -1 * path.dead_ends if distance > -50 else 0
-        loops = -1 * path.loops if distance > -50 else 0
-        wrong = -1 * path.wrong_actions if distance > -50 else 0
-    """
-    #else:
-    distance = -5 * (
+    distance = -1 * (
         abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
     )
-    dead_ends = -1 * path.dead_ends #if distance < -10 else 0
-    loops = -1 * path.loops #if distance < -10 else 0
-    wrong = -1 * path.wrong_actions #if distance < -10 else 0
+    #dead_ends = -1 * path.dead_ends #if distance < -10 else 0
+    #loops = -1 * path.loops #if distance < -10 else 0
+    #wrong = -1 * path.wrong_actions #if distance < -10 else 0
 
-    return (distance + wrong + loops + target_index)
+    return distance
 
 
 """distance = -1 * (
