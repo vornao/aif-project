@@ -281,3 +281,4 @@ def is_dead_end(game_map, position):
         return True
     else:
         return False
+    

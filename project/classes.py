@@ -124,9 +124,25 @@ def mutate(actions, bitmap, mutation_rate=0.5):
     # randomly select new actions for each position and replace
     for idx in idxs:
         actions[idx] = random.choice([0, 1, 2, 3])"""
+    length = len(actions)
     for i in range(len(actions)):
         if random.random() < mutation_rate + (1 - bitmap[i]) * mutation_rate * 3:
-            actions[i] = random.choice([0, 1, 2, 3])
+            if i <= len(actions) - 2:
+                actions = delete_loops(actions, i)
+            if len(actions) < length: # si è tolto un loop
+                actions += random.choices([0, 1, 2, 3], k=2) # aggiungo due azioni random (vedi Attenzione sotto)
+            else:
+                actions[i] = random.choice([0, 1, 2, 3]) # se non si è tolto un loop mutazione "normale"
+    return actions
+
+# Per il momento leviamo solo i loops "banali"
+# Attenzione: se elimina un loop restituisce actions lungo 2 in meno
+#TODO: fare in modo che questa funzione si usa se a generazione n ci sono questi loops "banali", allora 
+# a generazione n+1 non ci sono più
+def delete_loops(actions, index):
+    # check if there is a situation like north, south, north or east, west, east (and viceversa)
+    if actions[index] == actions[index+2] and actions[index+1] == (2 + actions[index])%4:
+        actions = actions[:index] + actions[index+2:]
     return actions
 
 
