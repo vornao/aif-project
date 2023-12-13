@@ -260,15 +260,17 @@ def is_loop(path, index):
     return current_location in previous_locations
 
 
-def count_dead_ends(path):
+def count_dead_ends(game_map, path):
     dead_ends = 0
     for i in range(1, len(path) - 1):
-        if is_dead_end(path, i):
+        if is_dead_end(game_map, path[i]):
             dead_ends += 1
     return dead_ends
 
 
-def is_dead_end(path, index):
-    current_location = path[index]
-    neighbors = [path[index - 1], path[index + 1]]
-    return neighbors.count(current_location) == 2
+def is_dead_end(game_map, position):
+    # check if the only valid action is path[index - 1]
+    if len(get_valid_actions(game_map, position)) == 1:
+        return True
+    else:
+        return False

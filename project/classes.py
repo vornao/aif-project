@@ -51,7 +51,7 @@ class Path:
         self.loops = count_loops(self.path)
         self.valid_actions_bitmap = valid_actions_bitmap(self.game_map.start, self.path)
         self.wrong_actions = wrong_actions(self.path)
-        self.dead_ends = count_dead_ends(self.path)
+        self.dead_ends = count_dead_ends(self.game_map.game_map, self.path)
 
     def __str__(self):
         return f"Path: {self.path}\n"
@@ -159,7 +159,7 @@ def fitness_function(individual: Individual, game_map: Map):
     distance = -5 * (
         abs(path.path[-1][0] - game_map.target[0]) + abs(path.path[-1][1] - game_map.target[1])
     )
-    #dead_ends = -1 * path.dead_ends if distance < -10 else 0
+    dead_ends = -1 * path.dead_ends #if distance < -10 else 0
     loops = -1 * path.loops #if distance < -10 else 0
     wrong = -1 * path.wrong_actions #if distance < -10 else 0
 
