@@ -12,10 +12,14 @@ dead_ends: {}, \
 distance: {}'
 
 
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x, axis=0))
+    return e_x / e_x.sum(axis=0)
+
 def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
-
 
 
 def get_player_location1(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
@@ -240,19 +244,6 @@ def random_nactions(actions=100):
 # ---------------------------------------------
 
 
-def valid_actions_bitmap(start, path):
-    prev = path[0]
-    bitmap = [0 if prev == start else 1]
-
-    for i in path[1:]:
-        if prev == i:
-            bitmap.append(0)
-        else:
-            bitmap.append(1)
-        prev = i
-    return bitmap
-
-
 def count_loops(path):
     loops = 0
     for i in range(1, len(path) - 1):
@@ -281,4 +272,41 @@ def is_dead_end(game_map, position):
         return True
     else:
         return False
-    
+
+# ----------------Some bitmaps stuff-----------------   
+
+def valid_actions_bitmap(start, path):
+    prev = path[0]
+    bitmap = [0 if prev == start else 1]
+
+    for i in path[1:]:
+        if prev == i:
+            bitmap.append(0)
+        else:
+            bitmap.append(1)
+        prev = i
+    return bitmap
+
+
+def loops_bitmap(path):
+    bitmap = [0] * len(path)
+    for i in range(1, len(path) - 1):
+        if is_loop(path, i):
+            bitmap[i] = 1
+    return bitmap
+
+
+def dead_ends_bitmap(game_map, path):
+    bitmap = [0] * len(path)
+    for i in range(1, len(path) - 1):
+        if is_dead_end(game_map, path[i]):
+            bitmap[i] = 1
+    return bitmap
+
+
+def sum_bimaps(*args):
+    """Return the bitwise sum of the bitmaps"""
+    return [sum(x) for x in zip(*args)]     
+
+
+

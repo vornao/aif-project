@@ -5,8 +5,12 @@ from utils import (
     path_from_actions,
     is_wall,
     valid_actions_bitmap,
+    loops_bitmap,
+    dead_ends_bitmap,
+    sum_bimaps,
     count_loops,
     count_dead_ends,
+    softmax
 )
 import numpy as np
 import random
@@ -81,6 +85,7 @@ class Individual:
         self.won = self.game_map.target in self.path.path
         self.target_index = self.get_target_index()
         self.distance = self.get_target_distance()
+        self.error_vector = self.get_error_vector()
 
     def get_target_index(self):
         if self.won: 
@@ -92,6 +97,14 @@ class Individual:
             return 0
         return abs(self.path[-1][0] - self.game_map.target[0]) + abs(self.path[-1][1] - self.game_map.target[1])
     
+    def get_error_vector(self):
+        lb = loops_bitmap(self.path.path)
+        va = valid_actions_bitmap(self.game_map.start, self.path.path)
+        de = dead_ends_bitmap(self.game_map.game_map, self.path.path)
+        return np.array(sum_bimaps(lb, va, de))
+        
+
+
     def __str__(self):
         return f"{self.path}\nFitness: {self.fitness}\nGeneration: {self.generation}\nWrong actions: {self.path.wrong_actions}"
 
@@ -116,6 +129,23 @@ def crossover_uniform(actions1, actions2):
             actions.append(actions2[i])
     return actions
 
+
+def exponential_decay(generation, max_generations):
+    return np.exp(-generation / max_generations)
+
+
+def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0):
+    length = len(actions)
+    error_vector = np.copy(error_vector)
+    num_mutations = np.random.binomial(length, mutation_rate)
+    num_mutations = exponential_decay(generation, 100) * num_mutations
+    
+    for _ in range(int(num_mutations)):
+        i = np.random.choice(length, p=softmax(error_vector))
+        actions[i] = np.random.choice([0, 1, 2, 3])
+        error_vector[i] = 0
+
+    return actions
 
 def mutate(actions, bitmap, mutation_rate=0.5):
     """
@@ -181,3 +211,10 @@ def fitness_function(individual: Individual, game_map: Map):
     wrong = -1 * path.wrong_actions if distance < -10 else 0
 
     return (distance + wrong + loops + dead_ends)/bonus"""
+
+
+
+def generate_offspring(*args):
+    print(len(args))
+    p1, p2, errors, generation = args
+    return softmax_mutate(crossover_uniform(p1.actions, p2.actions), errors, generation=generation)
