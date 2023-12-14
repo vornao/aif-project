@@ -67,7 +67,7 @@ class Individual:
         self.won = self.game_map.target in self.path
         self.__check_init_params__()
 
-        self.target_index = self.__get_target_index__()
+        self.target_index = self.__get_target_index__() 
         self.distance = self.__get_target_distance__()
         self.error_vector = self.__get_error_vector__()
         self.loops = count_loops(self.path)
@@ -184,9 +184,5 @@ def fitness_function(individual: Individual, game_map: Map) -> int:
     path: List[Tuple] = individual.path
     distance = -1 * (
         abs(path[-1][0] - game_map.target[0]) + abs(path[-1][1] - game_map.target[1])
-    )
-    # dead_ends = -1 * path.dead_ends #if distance < -10 else 0
-    # loops = -1 * path.loops #if distance < -10 else 0
-    # wrong = -1 * path.wrong_actions #if distance < -10 else 0
-
+    ) 
     return distance
