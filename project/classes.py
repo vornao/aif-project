@@ -214,7 +214,10 @@ def fitness_function(individual: Individual, game_map: Map):
 
 
 
-def generate_offspring(*args):
-    print(len(args))
+def generate_offspring(args):
     p1, p2, errors, generation = args
-    return softmax_mutate(crossover_uniform(p1.actions, p2.actions), errors, generation=generation)
+    return softmax_mutate(
+        actions=crossover_uniform(p1, p2), 
+        error_vector=errors, 
+        generation=generation
+    )
