@@ -1,8 +1,5 @@
 import numpy as np
 import random
-import math
-from utils import count_loops, count_dead_ends, wrong_actions
-from classes import Path, Individual, Map
 
 
 def crossover(actions1, actions2):
@@ -60,7 +57,7 @@ def fitness_function(individual: Individual, map: Map):
             abs(path[-1][0] - map.target[0]) + abs(path[-1][1] - map.target[1])
         )
     else:
-        dead_ends = -20* path.dead_ends
+        dead_ends = -20 * path.dead_ends
         loops = -10 * path.loops
         wrong = -20 * path.wrong_actions
         distance = -50 * (

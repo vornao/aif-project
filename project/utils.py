@@ -4,18 +4,19 @@ import random
 
 from typing import Tuple, List
 
-format_title = 'Generation {}, fitness: {}, position: {}, action: {}, wrong actions: {}, loops: {}, dead ends: {}, step: {}/{}'
-format_loop = 'best_individual in generation {}: fitness: {}, \
+format_title = "Generation {}, fitness: {}, position: {}, action: {}, wrong actions: {}, loops: {}, dead ends: {}, step: {}/{}"
+format_loop = "best_individual in generation {}: fitness: {}, \
 wrong actions: {}, \
 loops: {}, \
 dead_ends: {}, \
-distance: {}'
+distance: {}"
 
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = np.exp(x - np.max(x, axis=0))
     return e_x / e_x.sum(axis=0)
+
 
 def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
@@ -24,7 +25,7 @@ def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, i
 
 def get_player_location1(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
-    return (x, y)
+    return (int(x), int(y))
 
 
 def get_target_location(game_map: np.ndarray, symbol: str = ">") -> Tuple[int, int]:
@@ -148,7 +149,7 @@ def path_from_actions(
     x, y = start
     for action in actions:
         if action == action_map["N"]:
-            if x != 0 and not is_wall(game_map[x - 1, y]): 
+            if x != 0 and not is_wall(game_map[x - 1, y]):
                 x -= 1
         elif action == action_map["E"]:
             if y < game_map.shape[1] and not is_wall(game_map[x, y + 1]):
@@ -165,7 +166,7 @@ def path_from_actions(
     return path
 
 
-def wrong_actions(path) -> int:
+def wrong_actions(path: List[Tuple[int, int]]) -> int:
     wrong = 0
     for i in range(1, len(path)):
         if path[i] == path[i - 1]:
@@ -226,14 +227,14 @@ def random_nsteps(
 
     for i in range(steps):
         if current == target:
-            path = build_path_rand(parent, target)
+            path = build_path_rand(parent, target)  # type: ignore
             return path
         neighbors = get_valid_moves(game_map, current)
         neighbor = neighbors[np.random.randint(0, len(neighbors))]
 
-        parent.append((neighbor, current))
+        parent.append((neighbor, current))  # type: ignore
         current = neighbor
-    path = build_path_rand(parent, target)
+    path = build_path_rand(parent, target)  # type: ignore
     return path
 
 
@@ -244,7 +245,7 @@ def random_nactions(actions=100):
 # ---------------------------------------------
 
 
-def count_loops(path):
+def count_loops(path: List[Tuple[int, int]]):
     loops = 0
     for i in range(1, len(path) - 1):
         if is_loop(path, i):
@@ -252,13 +253,13 @@ def count_loops(path):
     return loops
 
 
-def is_loop(path, index):
+def is_loop(path: List[Tuple[int, int]], index: int):
     current_location = path[index]
     previous_locations = path[: index - 1]
     return current_location in previous_locations
 
 
-def count_dead_ends(game_map, path):
+def count_dead_ends(game_map: np.ndarray, path: List[Tuple[int, int]]):
     dead_ends = 0
     for i in range(1, len(path) - 1):
         if is_dead_end(game_map, path[i]):
@@ -266,14 +267,16 @@ def count_dead_ends(game_map, path):
     return dead_ends
 
 
-def is_dead_end(game_map, position):
+def is_dead_end(game_map: np.ndarray, position: Tuple[int, int]):
     # check if the only valid action is path[index - 1]
     if len(get_valid_actions(game_map, position)) == 1:
         return True
     else:
         return False
 
-# ----------------Some bitmaps stuff-----------------   
+
+# ----------------Some bitmaps stuff-----------------
+
 
 def valid_actions_bitmap(start, path):
     prev = path[0]
@@ -306,7 +309,4 @@ def dead_ends_bitmap(game_map, path):
 
 def sum_bimaps(*args):
     """Return the bitwise sum of the bitmaps"""
-    return [sum(x) for x in zip(*args)]     
-
-
-
+    return [sum(x) for x in zip(*args)]
