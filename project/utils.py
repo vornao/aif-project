@@ -257,6 +257,13 @@ def is_loop(path: List[Tuple[int, int]], index: int):
     window = path[index - 1 : index + 2]
     return window[0] == window[2]
 
+# Here we check if the element in index is in the previous locations:
+# NB. we notice that the situation in which you go through a wall is a generic_loop
+def is_generic_loop(path, index):
+    current_location = path[index]
+    previous_locations = path[: index - 1]
+    return current_location in previous_locations
+
 
 def count_dead_ends(game_map: np.ndarray, path: List[Tuple[int, int]]):
     dead_ends = 0
@@ -282,10 +289,10 @@ def valid_actions_bitmap(start, path):
     bitmap = [0 if prev == start else 1]
 
     for i in path[1:]:
-        if prev == i:
-            bitmap.append(0)
-        else:
+        if prev == i: # ifyou didn't move it means that you're going through a wall
             bitmap.append(1)
+        else:
+            bitmap.append(0)
         prev = i
     return bitmap
 

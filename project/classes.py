@@ -84,10 +84,10 @@ class Individual:
         )
 
     def __get_error_vector__(self):
-        lb = loops_bitmap(self.path)
-        va = valid_actions_bitmap(self.game_map.start, self.path)
-        de = dead_ends_bitmap(self.game_map.layout, self.path)
-        return np.array(sum_bimaps(lb, va, de))
+        self.lb = loops_bitmap(self.path)
+        self.va = valid_actions_bitmap(self.game_map.start, self.path)
+        self.de = dead_ends_bitmap(self.game_map.layout, self.path)
+        return np.array(sum_bimaps(self.lb, self.va, self.de))
 
     def __check_init_params__(self):
         if self.actions is None:
@@ -104,29 +104,40 @@ class Individual:
         return self.__str__()
 
 
-def crossover(actions1, actions2) -> List[int]:
+def crossover(actions1, actions2):
     """Crossover two paths"""
     # randomly select a crossover point
     i = np.random.randint(1, min(len(actions1), len(actions2)))
+    actions = actions1[:i] + actions2[i:]
+    dictionary = {'actions': actions, 'index': i}
     # return the two paths joined at the crossover point
-    return actions1[:i] + actions2[i:]
+    return dictionary
 
 
-def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0):
+def softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
     length = len(actions)
     error_vector = np.copy(error_vector)
+    wrong_actions_to_mutate = np.zeros(length)
     num_mutations = np.random.binomial(length, mutation_rate)
     num_mutations = exponential_decay(generation, 100) * num_mutations
 
     for _ in range(int(num_mutations)):
         i = np.random.choice(length, p=softmax(error_vector))
-        actions[i] = np.random.choice([0, 1, 2, 3])
-        error_vector[i] = 0
+        if delete_wrong_actions(actions, i, wrong_action_bitmap):
+            wrong_actions_to_mutate[i] = 1
+        else:
+            actions[i] = np.random.choice([0, 1, 2, 3])
+        error_vector[i] = 0 # cannot be mutated again
 
-    return actions
+    number_of_wrong_actions = len(wrong_actions_to_mutate.nonzero()[0])
+    for i in np.flip(wrong_actions_to_mutate.nonzero()[0]): # This is mindblowing!!!!!!
+        actions = np.delete(actions, i)
+    for _ in range(number_of_wrong_actions):
+        actions = np.append(actions, np.random.choice([0, 1, 2, 3]))
+    return list(actions)
 
 
-def _mutate(actions, bitmap, mutation_rate=0.5):
+def mutate(actions, bitmap, mutation_rate=0.5):
     """
     # randomly select n postions to mutate
     idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
@@ -161,6 +172,14 @@ def delete_loops(actions, index):
     ):
         actions = actions[:index] + actions[index + 2 :]
     return actions
+
+
+def delete_wrong_actions(actions, index, bitmap):
+    """NB. small loops are in this category too"""
+    if bitmap[index]: 
+        actions = actions[:index] + actions[index + 1 :]
+        return True
+    return False
 
 
 def fitness_function(individual: Individual, game_map: Map) -> int:
