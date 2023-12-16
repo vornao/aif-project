@@ -248,15 +248,14 @@ def random_nactions(actions=100):
 def count_loops(path: List[Tuple[int, int]]):
     loops = 0
     for i in range(1, len(path) - 1):
-        if is_loop(path, i):
-            loops += 1
+        window = path[i - 1 : i + 2]
+        loops += window[0] == window[2]
     return loops
 
 
 def is_loop(path: List[Tuple[int, int]], index: int):
-    current_location = path[index]
-    previous_locations = path[: index - 1]
-    return current_location in previous_locations
+    window = path[index - 1 : index + 2]
+    return window[0] == window[2]
 
 
 def count_dead_ends(game_map: np.ndarray, path: List[Tuple[int, int]]):
