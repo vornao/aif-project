@@ -1,7 +1,7 @@
 
 MAZE: "mylevel", ' '
 FLAGS:premapped
-MESSAGE:"This is a hard maze... good luck bitch."
+MESSAGE:"This is a hard maze... good luck."
 GEOMETRY:center,center
 
 MAP

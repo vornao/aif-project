@@ -28,13 +28,6 @@ def exponential_decay(generation, max_generations):
     return np.exp(-generation / max_generations)
 
 
-def generate_offspring(args):
-    p1, p2, errors, generation = args
-    return softmax_mutate(
-        actions=crossover_uniform(p1, p2), error_vector=errors, generation=generation
-    )
-
-
 class Map:
     def __init__(
         self, game_map: np.ndarray, start: Tuple[int, int], target: Tuple[int, int]
@@ -67,7 +60,7 @@ class Individual:
         self.won = self.game_map.target in self.path
         self.__check_init_params__()
 
-        self.target_index = self.__get_target_index__() 
+        self.target_index = self.__get_target_index__()
         self.distance = self.__get_target_distance__()
         self.error_vector = self.__get_error_vector__()
         self.loops = count_loops(self.path)
@@ -117,16 +110,6 @@ def crossover(actions1, actions2) -> List[int]:
     i = np.random.randint(1, min(len(actions1), len(actions2)))
     # return the two paths joined at the crossover point
     return actions1[:i] + actions2[i:]
-
-
-def crossover_uniform(actions1, actions2) -> List[int]:
-    actions = []
-    for i in range(len(actions1)):
-        if random.random() < 0.5:
-            actions.append(actions1[i])
-        else:
-            actions.append(actions2[i])
-    return actions
 
 
 def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0):
@@ -182,7 +165,10 @@ def delete_loops(actions, index):
 
 def fitness_function(individual: Individual, game_map: Map) -> int:
     path: List[Tuple] = individual.path
-    distance = -1 * (
-        abs(path[-1][0] - game_map.target[0]) + abs(path[-1][1] - game_map.target[1])
-    ) 
-    return distance
+    length = len(path)
+    loops = individual.loops / length
+    dead_ends = individual.dead_ends / length
+    wrong_actions = individual.wrong_actions / length
+    distance = -individual.distance
+
+    return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions)
