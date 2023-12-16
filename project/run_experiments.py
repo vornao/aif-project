@@ -114,6 +114,6 @@ if __name__ == '__main__':
         p.map(run_experiment, [winners_list for _ in range(EXPERIMENTS)])
 
     # export winners as json
-    with open(f'winners.json_{MAX_INDIVIDUALS}_{MAP_NAME}', 'w') as f:
+    with open(f'results/run_{MAX_INDIVIDUALS}_{MAP_NAME.replace(".des", "")}.json', 'w') as f:
         json.dump(winners_list, f)
         
