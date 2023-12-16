@@ -22,6 +22,7 @@ parser.add_argument('--max_generations', type=int, default=1000,)
 parser.add_argument('--max_individuals', type=int, default=16,)
 parser.add_argument('--experiments', type=int, default=100,)
 parser.add_argument('--map', type=str, default="irene.des",)
+parser.add_argument('--workers', type=int, default=6)
 
 args = parser.parse_args()
 # create first generation
@@ -29,14 +30,13 @@ MAX_GENERATIONS = args.max_generations
 MAX_INDIVIDUALS = args.max_individuals
 EXPERIMENTS = args.experiments
 MAP_NAME = args.map
+WORKERS = args.workers
 
 
 
 # fix the seed for reproducibility (not fixing the seed for the whole program since we have imports!)
 random.seed(6667)
 np.random.seed(6667)
-
-
 best_individuals = []
 
 def run_experiment(winners):
@@ -60,7 +60,7 @@ def run_experiment(winners):
 
     individuals = [
         Individual(random_nactions(300), 1, game_map) for _ in range(MAX_INDIVIDUALS)
-    ]
+    ] 
     individuals.sort(key=lambda x: x.fitness, reverse=True)
 
     for generation in range(MAX_GENERATIONS):
@@ -109,7 +109,7 @@ def run_experiment(winners):
 
 if __name__ == '__main__':
     winners_list = []
-    with Pool(8) as p:
+    with Pool(WORKERS) as p:
         # run experiments passing winners_list as argument
         p.map(run_experiment, [winners_list for _ in range(EXPERIMENTS)])
 
