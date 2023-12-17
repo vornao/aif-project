@@ -1,0 +1,402 @@
+[
+    {
+        "best_fitness": 0,
+        "generation": 64
+    },
+    {
+        "best_fitness": 0,
+        "generation": 119
+    },
+    {
+        "best_fitness": 0,
+        "generation": 124
+    },
+    {
+        "best_fitness": 0,
+        "generation": 146
+    },
+    {
+        "best_fitness": 0,
+        "generation": 180
+    },
+    {
+        "best_fitness": 0,
+        "generation": 116
+    },
+    {
+        "best_fitness": 0,
+        "generation": 60
+    },
+    {
+        "best_fitness": 0,
+        "generation": 132
+    },
+    {
+        "best_fitness": 0,
+        "generation": 81
+    },
+    {
+        "best_fitness": 0,
+        "generation": 146
+    },
+    {
+        "best_fitness": 0,
+        "generation": 525
+    },
+    {
+        "best_fitness": 0,
+        "generation": 265
+    },
+    {
+        "best_fitness": 0,
+        "generation": 136
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 236
+    },
+    {
+        "best_fitness": 0,
+        "generation": 328
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 183
+    },
+    {
+        "best_fitness": 0,
+        "generation": 192
+    },
+    {
+        "best_fitness": 0,
+        "generation": 139
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 122
+    },
+    {
+        "best_fitness": 0,
+        "generation": 255
+    },
+    {
+        "best_fitness": 0,
+        "generation": 202
+    },
+    {
+        "best_fitness": 0,
+        "generation": 280
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 128
+    },
+    {
+        "best_fitness": 0,
+        "generation": 200
+    },
+    {
+        "best_fitness": 0,
+        "generation": 63
+    },
+    {
+        "best_fitness": 0,
+        "generation": 211
+    },
+    {
+        "best_fitness": 0,
+        "generation": 178
+    },
+    {
+        "best_fitness": 0,
+        "generation": 88
+    },
+    {
+        "best_fitness": 0,
+        "generation": 116
+    },
+    {
+        "best_fitness": 0,
+        "generation": 156
+    },
+    {
+        "best_fitness": -1,
+        "generation": 999
+    },
+    {
+        "best_fitness": -1,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 91
+    },
+    {
+        "best_fitness": 0,
+        "generation": 119
+    },
+    {
+        "best_fitness": 0,
+        "generation": 190
+    },
+    {
+        "best_fitness": 0,
+        "generation": 118
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 127
+    },
+    {
+        "best_fitness": 0,
+        "generation": 98
+    },
+    {
+        "best_fitness": 0,
+        "generation": 164
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 221
+    },
+    {
+        "best_fitness": 0,
+        "generation": 164
+    },
+    {
+        "best_fitness": 0,
+        "generation": 242
+    },
+    {
+        "best_fitness": 0,
+        "generation": 271
+    },
+    {
+        "best_fitness": 0,
+        "generation": 191
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 49
+    },
+    {
+        "best_fitness": 0,
+        "generation": 46
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 124
+    },
+    {
+        "best_fitness": 0,
+        "generation": 123
+    },
+    {
+        "best_fitness": 0,
+        "generation": 266
+    },
+    {
+        "best_fitness": 0,
+        "generation": 126
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -1,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 147
+    },
+    {
+        "best_fitness": 0,
+        "generation": 223
+    },
+    {
+        "best_fitness": 0,
+        "generation": 140
+    },
+    {
+        "best_fitness": 0,
+        "generation": 171
+    },
+    {
+        "best_fitness": 0,
+        "generation": 210
+    },
+    {
+        "best_fitness": 0,
+        "generation": 154
+    },
+    {
+        "best_fitness": 0,
+        "generation": 117
+    },
+    {
+        "best_fitness": 0,
+        "generation": 307
+    },
+    {
+        "best_fitness": 0,
+        "generation": 88
+    },
+    {
+        "best_fitness": 0,
+        "generation": 146
+    },
+    {
+        "best_fitness": 0,
+        "generation": 195
+    },
+    {
+        "best_fitness": 0,
+        "generation": 251
+    },
+    {
+        "best_fitness": 0,
+        "generation": 142
+    },
+    {
+        "best_fitness": 0,
+        "generation": 113
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -11,
+        "generation": 999
+    },
+    {
+        "best_fitness": 0,
+        "generation": 103
+    },
+    {
+        "best_fitness": 0,
+        "generation": 104
+    },
+    {
+        "best_fitness": 0,
+        "generation": 421
+    },
+    {
+        "best_fitness": 0,
+        "generation": 103
+    },
+    {
+        "best_fitness": 0,
+        "generation": 74
+    },
+    {
+        "best_fitness": 0,
+        "generation": 130
+    },
+    {
+        "best_fitness": 0,
+        "generation": 434
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -1,
+        "generation": 999
+    },
+    {
+        "best_fitness": -11,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    },
+    {
+        "best_fitness": -13,
+        "generation": 999
+    },
+    {
+        "best_fitness": -2,
+        "generation": 999
+    }
+]
