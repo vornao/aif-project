@@ -1,0 +1,18 @@
+
+MAZE: "mylevel", ' '
+FLAGS:premapped
+GEOMETRY:center,center
+
+MAP
+|||||||||
+|.......|
+|.......|
+|.......|
+|.......|
+|.......|
+|||||||||
+ENDMAP
+
+STAIR:(7, 1),down
+
+BRANCH: (1,5,1,5),(5,3,5,3)
