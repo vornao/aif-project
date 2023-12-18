@@ -18,7 +18,6 @@ from multiprocessing import Pool, Manager, Lock
 from functools import partial
 from tqdm import tqdm
 
-
 import argparse
 
 parser = argparse.ArgumentParser(description="Run experiments")
