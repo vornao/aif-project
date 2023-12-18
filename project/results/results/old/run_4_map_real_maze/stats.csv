@@ -1,0 +1,6 @@
+best_fitness,generation,wrong_actions,loops,dead_ends,distance,first_winner
+-13,315,122,79,0,7,None
+-14,573,114,84,0,9,None
+-16,178,116,91,0,10,None
+-6,381,129,83,0,0,179
+-10,549,132,91,0,3,None
