@@ -103,18 +103,30 @@ class Individual:
     def __repr__(self):
         return self.__str__()
 
-
 def crossover(actions1, actions2):
     """Crossover two paths"""
     # randomly select a crossover point
     i = np.random.randint(1, min(len(actions1), len(actions2)))
     actions = actions1[:i] + actions2[i:]
-    dictionary = {'actions': actions, 'index': i}
+    # dictionary = {'actions': actions, 'index': i}
     # return the two paths joined at the crossover point
-    return dictionary
+    return actions
+
+def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0) -> List[int]:
+    length = len(actions)
+    error_vector = np.copy(error_vector)
+    num_mutations = np.random.binomial(length, mutation_rate)
+    num_mutations = exponential_decay(generation, 100) * num_mutations
+
+    for _ in range(int(num_mutations)):
+        i = np.random.choice(length, p=softmax(error_vector))
+        actions[i] = np.random.choice([0, 1, 2, 3])
+        error_vector[i] = 0
+
+    return actions
 
 
-def softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
+def _softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
     length = len(actions)
     error_vector = np.copy(error_vector)
     wrong_actions_to_mutate = np.zeros(length)
@@ -137,7 +149,7 @@ def softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutat
     return list(actions)
 
 
-def mutate(actions, bitmap, mutation_rate=0.5):
+def _mutate(actions, bitmap, mutation_rate=0.5):
     """
     # randomly select n postions to mutate
     idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
