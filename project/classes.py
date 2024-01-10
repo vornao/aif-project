@@ -201,5 +201,7 @@ def fitness_function(individual: Individual, game_map: Map) -> int:
     dead_ends = individual.dead_ends / length
     wrong_actions = individual.wrong_actions / length
     distance = -individual.distance
+    if game_map.target in path:
+        return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions) + 100 # sum a bonus
 
     return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions)
