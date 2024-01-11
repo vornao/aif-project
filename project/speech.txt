@@ -1,0 +1,22 @@
+## Problem setting
+### Maze solving
+- Partially Observable 
+- Discrete
+- Non-Episodic (Sequential) 
+- Single Agent, Non-Adversarial 
+- Deterministic
+- Static finite map: start and target coordinates are fixed
+
+## Genetic Algorithm (1)
+### Don't let children make parents' mistakes!
+• Start from the two best sequences of actions (parents)
+• Apply Crossover at a random index
+• Stochastically mutate genes based on parenting mistakes
+• Repeat until convergence!
+
+## Genetic Algorithm (2)
+### Informed mutations
+• For each position i in parents' path count the number of errors and generate a vector error
+• New individuals will mutate more likely where parents made huge mistakes
+• Choose number of mutations based on exponential decay on generation
+• Exploration - Exploitation trade off

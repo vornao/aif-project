@@ -23,9 +23,13 @@ from typing import List, Tuple
 - valutare se fare mutazioni in base anche a loop e _cul de sac_ e vedere implementazione che non penso sia banalissima
 """
 
+actions_set = [0, 1, 2, 3]
 
 def exponential_decay(generation, max_generations):
     return np.exp(-generation / max_generations)
+
+def linear_decay(generation, max_generations):
+    return (1 - (generation / max_generations)) + 0.1
 
 
 class Map:
@@ -112,15 +116,15 @@ def crossover(actions1, actions2):
     # return the two paths joined at the crossover point
     return actions
 
-def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0) -> List[int]:
-    length = len(actions)
-    error_vector = np.copy(error_vector)
+def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0, max_generations=1000) -> List[int]:
+    length        = len(actions)
+    error_vector  = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
-    num_mutations = exponential_decay(generation, 100) * num_mutations
+    num_mutations = linear_decay(generation, max_generations) * num_mutations
 
     for _ in range(int(num_mutations)):
         i = np.random.choice(length, p=softmax(error_vector))
-        actions[i] = np.random.choice([0, 1, 2, 3])
+        actions[i] = np.random.choice(actions_set)
         error_vector[i] = 0
 
     return actions
@@ -129,59 +133,59 @@ def informed_softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8
     length = len(actions)
     error_vector = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
-    num_mutations = exponential_decay(generation, 100) * num_mutations
+    num_mutations = exponential_decay(generation, 600) * num_mutations
 
     for _ in range(int(num_mutations)):
         i = np.random.choice(length, p=softmax(error_vector))
-        actions[i] = np.random.choice([0, 1, 2, 3])
+        actions[i] = np.random.choice(actions_set)
         error_vector[i] = 0
 
     return actions
 
-def _softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
-    length = len(actions)
-    error_vector = np.copy(error_vector)
-    wrong_actions_to_mutate = np.zeros(length)
-    num_mutations = np.random.binomial(length, mutation_rate)
-    #num_mutations = exponential_decay(generation, 100) * num_mutations
+# def _softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
+#     length = len(actions)
+#     error_vector = np.copy(error_vector)
+#     wrong_actions_to_mutate = np.zeros(length)
+#     num_mutations = np.random.binomial(length, mutation_rate)
+#     #num_mutations = exponential_decay(generation, 100) * num_mutations
 
-    for _ in range(int(num_mutations)):
-        i = np.random.choice(length, p=softmax(error_vector))
-        if delete_wrong_actions(actions, i, wrong_action_bitmap):
-            wrong_actions_to_mutate[i] = 1
-        else:
-            actions[i] = np.random.choice([0, 1, 2, 3])
-        error_vector[i] = 0 # cannot be mutated again
+#     for _ in range(int(num_mutations)):
+#         i = np.random.choice(length, p=softmax(error_vector))
+#         if delete_wrong_actions(actions, i, wrong_action_bitmap):
+#             wrong_actions_to_mutate[i] = 1
+#         else:
+#             actions[i] = np.random.choice([0, 1, 2, 3])
+#         error_vector[i] = 0 # cannot be mutated again
 
-    number_of_wrong_actions = len(wrong_actions_to_mutate.nonzero()[0])
-    for i in np.flip(wrong_actions_to_mutate.nonzero()[0]): # This is mindblowing!!!!!!
-        actions = np.delete(actions, i)
-    for _ in range(number_of_wrong_actions):
-        actions = np.append(actions, np.random.choice([0, 1, 2, 3]))
-    return list(actions)
+#     number_of_wrong_actions = len(wrong_actions_to_mutate.nonzero()[0])
+#     for i in np.flip(wrong_actions_to_mutate.nonzero()[0]): # This is mindblowing!!!!!!
+#         actions = np.delete(actions, i)
+#     for _ in range(number_of_wrong_actions):
+#         actions = np.append(actions, np.random.choice([0, 1, 2, 3]))
+#     return list(actions)
 
 
-def _mutate(actions, bitmap, mutation_rate=0.5):
-    """
-    # randomly select n postions to mutate
-    idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
-    # randomly select new actions for each position and replace
-    for idx in idxs:
-        actions[idx] = random.choice([0, 1, 2, 3])"""
-    length = len(actions)
-    for i in range(len(actions)):
-        if random.random() < mutation_rate + (1 - bitmap[i]) * mutation_rate * 3:
-            if i <= len(actions) - 2:
-                actions = delete_loops(actions, i)
-            if len(actions) < length:  # si è tolto un loop
-                actions += random.choices(
-                    [0, 1, 2, 3], k=2
-                )  # aggiungo due azioni random (vedi Attenzione sotto)
-            else:
-                actions[i] = random.choice(
-                    [0, 1, 2, 3]
-                )  # se non si è tolto un loop mutazione "normale"
-    return actions
+# def _mutate(actions, bitmap, mutation_rate=0.5):
+#     """
+#     # randomly select n postions to mutate
+#     idxs = random.sample(list(range(len(actions))), k = math.floor(len(actions)/5))
+#     # randomly select new actions for each position and replace
+#     for idx in idxs:
+#         actions[idx] = random.choice([0, 1, 2, 3])"""
+#     length = len(actions)
+#     for i in range(len(actions)):
+#         if random.random() < mutation_rate + (1 - bitmap[i]) * mutation_rate * 3:
+#             if i <= len(actions) - 2:
+#                 actions = delete_loops(actions, i)
+#             if len(actions) < length:  # si è tolto un loop
+#                 actions += random.choices(
+#                     [0, 1, 2, 3], k=2
+#                 )  # aggiungo due azioni random (vedi Attenzione sotto)
+#             else:
+#                 actions[i] = random.choice(
+#                     [0, 1, 2, 3]
+#                 )  # se non si è tolto un loop mutazione "normale"
+#     return actions
 
 
 # Per il momento leviamo solo i loops "banali"
