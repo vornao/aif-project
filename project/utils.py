@@ -269,7 +269,7 @@ def random_nsteps(
         parent.append((neighbor, current))  # type: ignore
         current = neighbor
     path = build_path_rand(parent, target)  # type: ignore
-    return path
+    return path[1:]
 
 
 def random_nactions(actions=100):
