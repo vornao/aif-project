@@ -37,6 +37,15 @@ def is_wall(position_element: int) -> bool:
     obstacles = "|- "
     return chr(position_element) in obstacles
 
+def is_wall_kb(position: tuple[int, int], KB) -> bool:
+    result = list(KB.query(f"maze(M), nth1({position[0]+1}, M, Row), nth1({position[1]+1}, Row, Cell)")) # type: ignore
+    if result:
+        cell_value = result[0]["Cell"]  # type: ignore
+        #print(f"Cell value: {cell_value}")
+    else:
+        raise("Query result is empty.") # type: ignore
+
+    return cell_value
 
 def get_valid_moves(
     game_map: np.ndarray, current_position: Tuple[int, int]
@@ -159,6 +168,31 @@ def path_from_actions(
                 x += 1
         elif action == action_map["W"]:
             if y != 0 and not is_wall(game_map[x, y - 1]):
+                y -= 1
+        else:
+            raise Exception("Invalid action!")
+        path.append((x, y))
+    return path
+
+
+def path_from_actions_kb(
+    game_map: np.ndarray, start: Tuple[int, int], actions: List[int], KB
+) -> List[Tuple[int, int]]:
+    action_map = {"N": 0, "E": 1, "S": 2, "W": 3}
+    path = []
+    x, y = start
+    for action in actions:
+        if action == action_map["N"]:
+            if x != 0 and not is_wall_kb((x - 1, y), KB):
+                x -= 1
+        elif action == action_map["E"]:
+            if y < game_map.shape[1] and not is_wall_kb((x, y + 1), KB):
+                y += 1
+        elif action == action_map["S"]:
+            if x < game_map.shape[0] and not is_wall_kb((x + 1, y), KB):
+                x += 1
+        elif action == action_map["W"]:
+            if y != 0 and not is_wall_kb((x, y - 1), KB):
                 y -= 1
         else:
             raise Exception("Invalid action!")
