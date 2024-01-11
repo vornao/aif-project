@@ -125,6 +125,18 @@ def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generat
 
     return actions
 
+def informed_softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0) -> List[int]:
+    length = len(actions)
+    error_vector = np.copy(error_vector)
+    num_mutations = np.random.binomial(length, mutation_rate)
+    num_mutations = exponential_decay(generation, 100) * num_mutations
+
+    for _ in range(int(num_mutations)):
+        i = np.random.choice(length, p=softmax(error_vector))
+        actions[i] = np.random.choice([0, 1, 2, 3])
+        error_vector[i] = 0
+
+    return actions
 
 def _softmax_mutate(actions, error_vector: np.ndarray, wrong_action_bitmap, mutation_rate=0.8, generation=0):
     length = len(actions)
