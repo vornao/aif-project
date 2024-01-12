@@ -80,16 +80,16 @@ def get_valid_actions(
     valid = []
     x, y = current_position
     # North
-    if y - 1 > 0 and not is_wall(game_map[x, y - 1]):
+    if y - 1 > 0 and not is_wall(game_map[x-1, y]):
         valid.append(0)
     # East
-    if x + 1 < x_limit and not is_wall(game_map[x + 1, y]):
+    if x + 1 < x_limit and not is_wall(game_map[x, y+1]):
         valid.append(1)
     # South
-    if y + 1 < y_limit and not is_wall(game_map[x, y + 1]):
+    if y + 1 < y_limit and not is_wall(game_map[x+1, y]):
         valid.append(2)
     # West
-    if x - 1 > 0 and not is_wall(game_map[x - 1, y]):
+    if x - 1 > 0 and not is_wall(game_map[x, y-1]):
         valid.append(3)
 
     return valid

@@ -15,6 +15,13 @@ is_valid_action(Row, Col, Action) :-
     is_valid(NewRow, NewCol).
 
 
+valid_cardinal_actions(Row, Col, Action) :-
+    maze(Maze),
+    action_to_coordinates(Action, Row, Col, NewRow, NewCol),
+    is_valid(NewRow, NewCol).
+
+
+
 % translate action to coordinates where 0 means north, 1 means east, 2 means south, 3 means west
 action_to_coordinates(0, Row, Col, NewRow, Col) :-  % north
     NewRow is Row - 1.                        % row - 1
