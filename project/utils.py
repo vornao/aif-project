@@ -4,6 +4,7 @@ import random
 
 from typing import Tuple, List
 
+# Setting for the print
 format_title = "Generation {}, fitness: {}, position: {}, action: {}, wrong actions: {}, loops: {}, dead ends: {}, step: {}/{}"
 format_loop = "best_individual in generation {}: fitness: {}, \
 wrong actions: {}, \
@@ -23,11 +24,6 @@ def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, i
     return (x[0], y[0])
 
 
-def get_player_location1(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
-    x, y = np.where(game_map == ord(symbol))
-    return (int(x), int(y))
-
-
 def get_target_location(game_map: np.ndarray, symbol: str = ">") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
@@ -37,6 +33,7 @@ def is_wall(position_element: int) -> bool:
     obstacles = "|- "
     return chr(position_element) in obstacles
 
+# We can also define 'is_wall' using the KB
 def is_wall_kb(position: tuple[int, int], KB) -> bool:
     result = list(KB.query(f"maze(M), nth1({position[0]+1}, M, Row), nth1({position[1]+1}, Row, Cell)")) # type: ignore
     if result:
@@ -47,6 +44,8 @@ def is_wall_kb(position: tuple[int, int], KB) -> bool:
 
     return cell_value
 
+
+# TODO: check if we use both get_valid_moves and get_valid_actions
 def get_valid_moves(
     game_map: np.ndarray, current_position: Tuple[int, int]
 ) -> List[Tuple[int, int]]:
@@ -93,23 +92,6 @@ def get_valid_actions(
         valid.append(3)
 
     return valid
-
-
-# ---------------------------------------------
-
-"""def direction_from_actions(action: List[Tuple[int, int]]) -> list(int):
-    directions = []
-    for i in range(len(action)):
-        if action[i][0] == 0 and action[i][1] == -1:
-            directions.append(0)
-        elif action[i][0] == 1 and action[i][1] == 0:
-            directions.append(1)
-        elif action[i][0] == 0 and action[i][1] == 1:
-            directions.append(2)
-        elif action[i][0] == -1 and action[i][1] == 0:
-            directions.append(3)
-    return directions"""
-
 
 # ---------------------------------------------
 
@@ -175,6 +157,7 @@ def path_from_actions(
     return path
 
 
+# We can also define 'path_from_actions' using the KB
 def path_from_actions_kb(
     game_map: np.ndarray, start: Tuple[int, int], actions: List[int], KB
 ) -> List[Tuple[int, int]]:
@@ -209,7 +192,7 @@ def wrong_actions(path: List[Tuple[int, int]]) -> int:
 
 
 # ---------------------------------------------
-# path len return the position of the first occurence of the target in the path
+# path len returns the position of the first occurence of the target in the path
 # if the target is not in the path, it returns -1
 # this way we get the length of the path from the start to the target
 
@@ -265,11 +248,11 @@ def random_nsteps(
             return path
         neighbors = get_valid_moves(game_map, current)
         neighbor = neighbors[np.random.randint(0, len(neighbors))]
-
         parent.append((neighbor, current))  # type: ignore
         current = neighbor
     path = build_path_rand(parent, target)  # type: ignore
     return path[1:]
+# TODO: write 'random_nsteps' using the KB
 
 
 def random_nactions(actions=100):
