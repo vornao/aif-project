@@ -116,11 +116,12 @@ def crossover(actions1, actions2):
     # return the two paths joined at the crossover point
     return actions
 
-def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0, max_generations=1000) -> List[int]:
+def softmax_mutate(actions, error_vector: np.ndarray, mutation_rate=0.8, generation=0, max_generations=1000, decay = True) -> List[int]:
     length        = len(actions)
     error_vector  = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
-    num_mutations = linear_decay(generation, max_generations) * num_mutations
+    if decay: 
+        num_mutations = linear_decay(generation, max_generations) * num_mutations
 
     for _ in range(int(num_mutations)):
         i = np.random.choice(length, p=softmax(error_vector))
@@ -218,6 +219,6 @@ def fitness_function(individual: Individual, game_map: Map) -> int:
     wrong_actions = individual.wrong_actions / length
     distance = -individual.distance
     if game_map.target in path:
-        return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions) + 100 # sum a bonus
+        return distance - int(length * loops) - int(length * dead_ends) - int(length * wrong_actions) +300# sum a bonus
 
     return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions)
