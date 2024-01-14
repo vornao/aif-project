@@ -10,7 +10,7 @@ is_valid(Row, Col) :-
 
 
 is_valid_action(Row, Col, Action) :-
-    maze(Maze),
+    %maze(Maze),
     action_to_coordinates(Action, Row, Col, NewRow, NewCol),
     is_valid(NewRow, NewCol).
 
