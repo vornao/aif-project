@@ -236,6 +236,28 @@ def build_path_rand(
     return path
 
 
+def random_nvalid_actions_kb(start: Tuple[int, int], target: Tuple[int, int], KB, steps: int = 100):
+    actions = []
+    possible_actions = [0, 1, 2, 3]
+    current = start
+    for i in range(steps):
+        query_string = f"findall(Action, is_valid_action({current[0]+1}, {current[1]+1}, Action), Actions), intersection(Actions, {possible_actions}, ValidActions)"
+        results = list(KB.query(query_string))
+        valid_actions = results[0]['ValidActions'] # type: ignore
+        action = valid_actions[np.random.randint(0, len(valid_actions))] # type: ignore
+        actions.append(action)
+        current = apply_action[action](current[0], current[1])
+    return actions
+    
+
+apply_action = {
+    0: lambda x, y: (x - 1, y),
+    1: lambda x, y: (x, y + 1),
+    2: lambda x, y: (x + 1, y),
+    3: lambda x, y: (x, y - 1),
+}
+
+
 def random_nsteps(
     game_map: np.ndarray, start: Tuple[int, int], target: Tuple[int, int], steps=100
 ) -> List[Tuple[int, int]]:
