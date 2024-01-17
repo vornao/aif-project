@@ -7,7 +7,8 @@ import math
 import IPython.display as display
 import os
 
-os.chdir("/Users/vornao/Developer/aif-project/project")
+#os.chdir("/Users/vornao/Developer/aif-project/project")
+os.chdir('/Users/irene/VSCodeProjects/aif-project/project')
 
 from classes import *
 from tqdm import tqdm
@@ -61,9 +62,17 @@ MAP_NAME = args.map
 WORKERS = args.workers
 FITNESS = args.fitness
 
+fitness_name = ''
+if FITNESS == 0:
+    fitness_name = '0'
+elif FITNESS == 1:
+    fitness_name = '1'
+elif FITNESS == 2:
+    fitness_name = '2'
+
 # make directory into results/max_individuals
-if not os.path.exists(f"results/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}"):
-    os.mkdir(f"results/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}")
+if not os.path.exists(f"results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}"):
+    os.mkdir(f"results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}")
 
 best_individuals = []
 
