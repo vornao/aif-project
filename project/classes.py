@@ -51,7 +51,7 @@ class Map:
 
 
 class Individual:
-    def __init__(self, actions: List[int], generation: int, game_map: Map):
+    def __init__(self, actions: List[int], generation: int, game_map: Map, fitness: int = 0):
         self.generation: int = generation
         self.actions: List[int] = actions
         self.game_map: Map = game_map
@@ -67,18 +67,26 @@ class Individual:
         self.target_index = self.__get_target_index__()
         self.distance = self.__get_target_distance__()
         self.error_vector = self.__get_error_vector__()
-        self.loops = count_loops(self.path)
+        self.loops = count_loops(self.path[:self.target_index])
         self.dead_ends = count_dead_ends(
             self.game_map.layout,
-            self.path,
+            self.path[:self.target_index],
         )
-        self.wrong_actions = wrong_actions(self.path)
-        self.fitness: int = fitness_function(self, self.game_map)
+        self.wrong_actions = wrong_actions(self.path[:self.target_index])
+
+        if fitness == 0:
+            self.fitness: int = fitness_manhattan(self, self.game_map)
+        elif fitness == 1:
+                self.fitness: int = fitness_function(self, self.game_map)
+        elif fitness == 2:
+            self.fitness: int = fitness_function_dynamic(self, self.game_map)
+        else:
+            raise ValueError("fitness function not valid")
 
     def __get_target_index__(self) -> int:
         if self.won:
             return self.path.index(self.game_map.target)
-        return -1  # if target is not in the path return -1
+        return 300  # if target is not in the path return 300, i.e., the maximum number of steps
 
     def __get_target_distance__(self) -> int:
         if self.won:
@@ -211,6 +219,11 @@ def delete_wrong_actions(actions, index, bitmap):
     return False
 
 
+def fitness_manhattan(individual: Individual, game_map: Map) -> int:
+
+    return 0 -individual.distance 
+
+
 def fitness_function(individual: Individual, game_map: Map) -> int:
     path: List[Tuple] = individual.path
     length = len(path)
@@ -218,7 +231,18 @@ def fitness_function(individual: Individual, game_map: Map) -> int:
     dead_ends = individual.dead_ends / length
     wrong_actions = individual.wrong_actions / length
     distance = -individual.distance
-    if game_map.target in path:
-        return distance - int(length * loops) - int(length * dead_ends) - int(length * wrong_actions) +300# sum a bonus
 
     return distance - int(10 * loops) - int(10 * dead_ends) - int(10 * wrong_actions)
+
+
+def fitness_function_dynamic(individual: Individual, game_map: Map) -> int:
+    path: List[Tuple] = individual.path
+    length = len(path)
+    loops = individual.loops / length
+    dead_ends = individual.dead_ends / length
+    wrong_actions = individual.wrong_actions / length
+    distance = -individual.distance
+    if game_map.target in path:
+        return 0 - int(length * loops) - int(length * dead_ends) - int(length * wrong_actions) 
+
+    return distance - 300 # we penalize the distance if the target is not reached

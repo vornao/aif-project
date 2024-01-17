@@ -39,9 +39,18 @@ parser.add_argument(
 parser.add_argument(
     "--map",
     type=str,
-    default="irene.des",
+    default="real_maze.des",
 )
-parser.add_argument("--workers", type=int, default=6)
+parser.add_argument(
+    "--workers", 
+    type=int, 
+    default=6
+)
+parser.add_argument(
+    "--fitness", 
+    type=int, 
+    default=0
+)
 
 args = parser.parse_args()
 # create first generation
@@ -50,6 +59,7 @@ MAX_INDIVIDUALS = args.max_individuals
 EXPERIMENTS = args.experiments
 MAP_NAME = args.map
 WORKERS = args.workers
+FITNESS = args.fitness
 
 # make directory into results/max_individuals
 if not os.path.exists(f"results/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}"):
@@ -81,7 +91,7 @@ def run_experiment(winners, lock):
     game_map = Map(game_map, start, target)
 
     individuals = [
-        Individual(random_nactions(300), 1, game_map) for _ in range(MAX_INDIVIDUALS)
+        Individual(random_nactions(300), 1, game_map, fitness=FITNESS) for _ in range(MAX_INDIVIDUALS)
     ]
     individuals.sort(key=lambda x: x.fitness, reverse=True)
 
@@ -100,7 +110,7 @@ def run_experiment(winners, lock):
         ]
 
         individuals[2:] = [
-            Individual(offspring[i], generation + 1, game_map)
+            Individual(offspring[i], generation + 1, game_map, fitness=FITNESS)
             for i in range(MAX_INDIVIDUALS - 2)
         ]
 
