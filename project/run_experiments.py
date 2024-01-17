@@ -28,7 +28,7 @@ parser.add_argument(
     default=1000,
 )
 parser.add_argument(
-    "--max_individuals",
+    "--individuals",
     type=int,
     default=16,
 )
@@ -56,7 +56,7 @@ parser.add_argument(
 args = parser.parse_args()
 # create first generation
 MAX_GENERATIONS = args.max_generations
-MAX_INDIVIDUALS = args.max_individuals
+MAX_INDIVIDUALS = args.individuals
 EXPERIMENTS = args.experiments
 MAP_NAME = args.map
 WORKERS = args.workers
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         # export winners as json
         winners_list = list(winners_list)
         with open(
-            f'results/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/stats.csv', "w"
+            f'results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/stats.csv', "w"
         ) as f:
             # write csv header
             f.write("best_fitness,generation,wrong_actions,loops,dead_ends,distance,first_winner\n")
@@ -174,6 +174,6 @@ if __name__ == "__main__":
                     f"{winner['best_fitness']},{winner['generation']},{winner['wrong_actions']},{winner['loops']},{winner['dead_ends']},{winner['distance']},{winner['first_win']}\n"
                 )
 
-        with open(f'results/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/fitnesses.json', "w") as f:
+        with open(f'results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/fitnesses.json', "w") as f:
             # for each winner in winners_list, write fitnesses lists to json
             json.dump([winner["fitnesses"] for winner in winners_list], f)
