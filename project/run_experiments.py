@@ -8,7 +8,7 @@ import IPython.display as display
 import os
 
 #os.chdir("/Users/vornao/Developer/aif-project/project")
-os.chdir('/Users/irene/VSCodeProjects/aif-project/project')
+os.chdir('/Users/vornao/Developer/aif-project/project')
 
 from classes import *
 from tqdm import tqdm
