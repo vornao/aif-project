@@ -31,7 +31,7 @@ match = {
 actions_set = [0, 1, 2, 3]
 
 
-######  MATH UTILS  ##################################################################################################################
+######  MATH UTILS  #################################################
 
 def exponential_decay(generation, max_generations):
     return np.exp(-generation / max_generations)
@@ -79,7 +79,7 @@ def softmax_mutate(
     return actions
 
 
-######  CLASSES  #####################################################################################################################
+######  CLASSES  ####################################################
 
 class Map:
     def __init__(
@@ -164,7 +164,7 @@ class Individual:
         return self.__str__()
 
 
-######  GENETIC ALGORITHM  ###########################################################################################################
+######  GENETIC ALGORITHM  ##########################################
     
 def run_genetic(
     env,
@@ -316,7 +316,7 @@ def plot_winner_path(env, game, game_map, best_individuals):
             print("YOU WON!")
 
 
-######  FITNESS FUNCTIONS  ###########################################################################################################
+######  FITNESS FUNCTIONS  ##########################################
 
 def fitness_manhattan(individual: Individual, game_map: Map) -> int:
     return 0 - individual.distance
@@ -351,9 +351,12 @@ def fitness_function_dynamic(individual: Individual, game_map: Map) -> int:
     return distance - 300  # we penalize the distance if the target is not reached
 
 
-######  MiniHack MAP UTILS  ##########################################################################################################
+######  MiniHack MAP UTILS  #########################################
 
-def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
+def get_player_location(
+        game_map: np.ndarray, 
+        symbol: str = "@"
+    ) -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
     return (x[0], y[0])
 
@@ -370,7 +373,11 @@ def is_wall(position_element: int) -> bool:
 
 # We can also define 'is_wall' using the KB
 def is_wall_kb(position: tuple[int, int], KB) -> bool:
-    result = list(KB.query(f"maze(M), nth1({position[0]+1}, M, Row), nth1({position[1]+1}, Row, Cell)"))  # type: ignore
+    result = list(
+        KB.query(
+            f"maze(M), nth1({position[0]+1}, M, Row), nth1({position[1]+1}, Row, Cell)"
+            )
+        )  # type: ignore
     if result:
         cell_value = result[0]["Cell"]  # type: ignore
         # print(f"Cell value: {cell_value}")
@@ -653,14 +660,14 @@ def delete_wrong_actions(actions, index, bitmap):
     return False
 
 
-######  BITMAPS TO COMPUTE ERRORS  ###################################################################################################
+######  BITMAPS TO COMPUTE ERRORS  ##################################
 
 def valid_actions_bitmap(start, path):
     prev = path[0]
     bitmap = [0 if prev == start else 1]
 
     for i in path[1:]:
-        if prev == i:  # ifyou didn't move it means that you're going through a wall
+        if prev == i:  
             bitmap.append(1)
         else:
             bitmap.append(0)
