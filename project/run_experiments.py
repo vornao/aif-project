@@ -8,9 +8,8 @@ import IPython.display as display
 import os
 
 #os.chdir("/Users/vornao/Developer/aif-project/project")
-os.chdir('/Users/vornao/Developer/aif-project/project')
+#os.chdir('/Users/vornao/Developer/aif-project/project')
 
-from classes import *
 from tqdm import tqdm
 from utils import *
 import json
@@ -100,7 +99,7 @@ def run_experiment(winners, lock):
     game_map = Map(game_map, start, target)
 
     individuals = [
-        Individual(random_nactions(300), 1, game_map, fitness=FITNESS) for _ in range(MAX_INDIVIDUALS)
+        Individual(random_nactions(300), 1, game_map, fitness=FITNESS) for _ in range(MAX_INDIVIDUALS) # type: ignore
     ]
     individuals.sort(key=lambda x: x.fitness, reverse=True)
 
@@ -119,7 +118,7 @@ def run_experiment(winners, lock):
         ]
 
         individuals[2:] = [
-            Individual(offspring[i], generation + 1, game_map, fitness=FITNESS)
+            Individual(offspring[i], generation + 1, game_map, fitness=FITNESS) # type: ignore
             for i in range(MAX_INDIVIDUALS - 2)
         ]
 
