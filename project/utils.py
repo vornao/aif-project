@@ -172,7 +172,7 @@ def run_genetic(
     n_generations: int,
     fitness_type: str,
     mutation_rate=0.8,
-    seed=42,
+    seed=42, # ૮꒰ ˶• ༝ •˶꒱ა ♡
 ) -> List[Individual]:
     """
     Run the genetic algorithm for the given number of generations, with the given number of individuals.
@@ -218,18 +218,7 @@ def run_genetic(
     
     with tqdm(total=MAX_GENERATIONS, colour="#9244c9", ncols=150) as pbar:
         for generation in range(MAX_GENERATIONS):
-            if generation % 25 == -1:
-                print(
-                    format_loop.format(
-                        generation,
-                        best_fitness,
-                        individuals[0].wrong_actions,
-                        individuals[0].loops,
-                        individuals[0].dead_ends,
-                        individuals[0].distance,
-                    )
-                )
-
+            
             # take 2 best individuals -> maybe can be replaced with probability distribution based on fitness
             # also roulette wheel selection.
             p1, p2 = individuals[0], individuals[1]
@@ -250,14 +239,14 @@ def run_genetic(
                 Individual(offspring[i], generation + 1, game_map, fitness=fit)
                 for i in range(MAX_INDIVIDUALS - 2)
             ]
-            individuals.sort(key=lambda x: x.fitness, reverse=True)
 
+            individuals.sort(key=lambda x: x.fitness, reverse=True)
             best_fitness = individuals[0].fitness
             best_individuals.append(individuals[0])
 
             if individuals[0].fitness == 0 and fit == 0:
                 print(
-                    f"> best individual in generation {generation}: {individuals[0].fitness}, wrong actions: {individuals[0].wrong_actions}"
+                    f"> best individual in generation {individuals[0].generation}: {individuals[0].fitness}, wrong actions: {individuals[0].wrong_actions}"
                 )
                 break
 
