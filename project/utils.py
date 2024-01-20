@@ -213,10 +213,11 @@ def run_genetic(
     individuals.sort(key=lambda x: x.fitness, reverse=True)
     print("> Evolving...")
 
+    best_fitness = individuals[0].fitness
+    best_individuals.append(individuals[0])
+    
     with tqdm(total=MAX_GENERATIONS, colour="#9244c9", ncols=150) as pbar:
         for generation in range(MAX_GENERATIONS):
-            best_fitness = individuals[0].fitness
-            best_individuals.append(individuals[0])
             if generation % 25 == -1:
                 print(
                     format_loop.format(
