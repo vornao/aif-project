@@ -28,7 +28,7 @@ match = {
 }
 
 
-actions_set = [0, 1, 2, 3]
+actions_set = {0, 1, 2, 3}
 
 
 ######  MATH UTILS  #################################################
@@ -73,7 +73,8 @@ def softmax_mutate(
 
     for _ in range(int(num_mutations)):
         i = np.random.choice(length, p=softmax(error_vector))
-        actions[i] = np.random.choice(actions_set)
+        wrong = {actions[i]}
+        actions[i] = np.random.choice(list(actions_set - wrong))
         error_vector[i] = 0
 
     return actions
@@ -626,6 +627,11 @@ def is_generic_loop(path, index):
     previous_locations = path[: index - 1]
     return current_location in previous_locations
 
+def is_k_loop(path, index, k):
+    current_location = path[index]
+    previous_locations = path[index - k: index]
+    return current_location in previous_locations
+
 
 def count_dead_ends(game_map: np.ndarray, path: List[Tuple[int, int]]):
     dead_ends = 0
@@ -677,8 +683,9 @@ def valid_actions_bitmap(start, path):
 
 def loops_bitmap(path):
     bitmap = [0] * len(path)
+    k = 5
     for i in range(1, len(path) - 1):
-        if is_loop(path, i):
+        if is_k_loop(path, i, k):
             bitmap[i] = 1
     return bitmap
 
