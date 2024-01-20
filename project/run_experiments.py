@@ -8,7 +8,6 @@ import IPython.display as display
 import os
 
 #os.chdir("/Users/vornao/Developer/aif-project/project")
-#os.chdir('/Users/vornao/Developer/aif-project/project')
 
 from tqdm import tqdm
 from utils import *

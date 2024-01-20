@@ -30,8 +30,8 @@ match = {
 
 actions_set = [0, 1, 2, 3]
 
-### Math utils ###
 
+######  MATH UTILS  ##################################################################################################################
 
 def exponential_decay(generation, max_generations):
     return np.exp(-generation / max_generations)
@@ -78,6 +78,8 @@ def softmax_mutate(
 
     return actions
 
+
+######  CLASSES  #####################################################################################################################
 
 class Map:
     def __init__(
@@ -162,6 +164,8 @@ class Individual:
         return self.__str__()
 
 
+######  GENETIC ALGORITHM  ###########################################################################################################
+    
 def run_genetic(
     env,
     n_individuals: int,
@@ -322,25 +326,7 @@ def plot_winner_path(env, game, game_map, best_individuals):
             print("YOU WON!")
 
 
-def delete_loops(actions, index):
-    if (
-        actions[index] == actions[index + 2]
-        and actions[index + 1] == (2 + actions[index]) % 4
-    ):
-        actions = actions[:index] + actions[index + 2 :]
-    return actions
-
-
-def delete_wrong_actions(actions, index, bitmap):
-    """NB. small loops are in this category too"""
-    if bitmap[index]:
-        actions = actions[:index] + actions[index + 1 :]
-        return True
-    return False
-
-
-### Fitness functions ###
-
+######  FITNESS FUNCTIONS  ###########################################################################################################
 
 def fitness_manhattan(individual: Individual, game_map: Map) -> int:
     return 0 - individual.distance
@@ -375,11 +361,7 @@ def fitness_function_dynamic(individual: Individual, game_map: Map) -> int:
     return distance - 300  # we penalize the distance if the target is not reached
 
 
-##############################################
-
-
-### MiniHack map utils ###
-
+######  MiniHack MAP UTILS  ##########################################################################################################
 
 def get_player_location(game_map: np.ndarray, symbol: str = "@") -> Tuple[int, int]:
     x, y = np.where(game_map == ord(symbol))
@@ -430,10 +412,6 @@ def get_valid_moves(
     return valid
 
 
-# ---------------------------------------------
-# defined by us
-
-
 def get_valid_actions(
     game_map: np.ndarray, current_position: Tuple[int, int]
 ) -> List[int]:
@@ -454,9 +432,6 @@ def get_valid_actions(
         valid.append(3)
 
     return valid
-
-
-# ---------------------------------------------
 
 
 def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> list[int]:
@@ -489,7 +464,6 @@ def actions_from_path(start: Tuple[int, int], path: List[Tuple[int, int]]) -> li
 
 
 # ---------------------------------------------
-# defined by us
 # NOTE: this function, even if the action is not valid, appends the same position in the list of positions
 # this list of position will be the path
 # this is why the agent will stay still for a certain number of steps, even if the action changes
@@ -569,7 +543,6 @@ def pathlen(path, target):
 
 
 # ---------------------------------------------
-# functions defined by us
 # to generate a random path, we need to generate a random sequence of actions
 # NOTE: we generate a random sequence of VALID actions, so that the agent will never go through a wall
 # we could implement the control in PROLOG
@@ -671,10 +644,26 @@ def is_dead_end(game_map: np.ndarray, position: Tuple[int, int]):
         return True
     else:
         return False
+    
+
+def delete_loops(actions, index):
+    if (
+        actions[index] == actions[index + 2]
+        and actions[index + 1] == (2 + actions[index]) % 4
+    ):
+        actions = actions[:index] + actions[index + 2 :]
+    return actions
 
 
-### Some bitmaps stuff to compute errors ###
+def delete_wrong_actions(actions, index, bitmap):
+    """NB. small loops are in this category too"""
+    if bitmap[index]:
+        actions = actions[:index] + actions[index + 1 :]
+        return True
+    return False
 
+
+######  BITMAPS TO COMPUTE ERRORS  ###################################################################################################
 
 def valid_actions_bitmap(start, path):
     prev = path[0]
@@ -708,6 +697,3 @@ def dead_ends_bitmap(game_map, path):
 def sum_bimaps(*args):
     """Return the bitwise sum of the bitmaps"""
     return [sum(x) for x in zip(*args)]
-
-
-##############################################
