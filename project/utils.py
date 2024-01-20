@@ -68,7 +68,8 @@ def softmax_mutate(
     length = len(actions)
     error_vector = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
-    if decay:
+    
+    if decay and mutation_rate > 0.1:
         num_mutations = linear_decay(generation, max_generations) * num_mutations
 
     for _ in range(int(num_mutations)):
@@ -148,8 +149,14 @@ class Individual:
         self.loops = np.sum(self.lb)
         self.dead_ends = np.sum(self.de)
         self.wrong_actions = np.sum(self.va)
-        return np.array(sum_bimaps(self.lb, self.va, self.de))
 
+        bsum = np.array(sum_bimaps(self.lb, self.va, self.de))
+
+        if self.won:
+            bsum[self.target_index:] = 0
+
+        return bsum
+    
     def __check_init_params__(self):
         if self.actions is None:
             raise ValueError("actions cannot be None")
@@ -342,12 +349,8 @@ def fitness_function_dynamic(individual: Individual, game_map: Map) -> int:
     wrong_actions = individual.wrong_actions / length
     distance = -individual.distance
     if game_map.target in path:
-        return (
-            0
-            - int(length * loops)
-            - int(length * dead_ends)
-            - int(length * wrong_actions)
-        )
+        # retrurn the number of steps to reach the target
+        return -individual.target_index
 
     return distance - 300  # we penalize the distance if the target is not reached
 
@@ -683,7 +686,7 @@ def valid_actions_bitmap(start, path):
 
 def loops_bitmap(path):
     bitmap = [0] * len(path)
-    k = 5
+    k = 3
     for i in range(1, len(path) - 1):
         if is_k_loop(path, i, k):
             bitmap[i] = 1
