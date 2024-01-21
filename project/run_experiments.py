@@ -69,8 +69,12 @@ elif FITNESS == 2:
     fitness_name = '2'
 
 # make directory into results/max_individuals
-if not os.path.exists(f"results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}"):
-    os.mkdir(f"results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace('.des', '')}")
+if not os.path.exists(f"results_{fitness_name}/run_random_map_{MAP_NAME.replace('.des', '')}"):
+    # make also results directory if it doesn't exist
+    if not os.path.exists(f"results_{fitness_name}"):
+        os.makedirs(f"results_{fitness_name}")
+
+    os.makedirs(f"results_{fitness_name}/run_random_map_{MAP_NAME.replace('.des', '')}")
 
 best_individuals = []
 
@@ -110,8 +114,12 @@ def run_experiment(winners, lock):
         errors = p1.error_vector + p2.error_vector
 
         offspring = [
-            softmax_mutate(
-                crossover(p1.actions, p2.actions), errors, generation=generation
+            random_mutate(
+                crossover(p1.actions, p2.actions), 
+                errors, 
+                generation=generation,
+                mutation_rate=0.2,
+                max_generations=MAX_GENERATIONS,
             )
             for _ in range(MAX_INDIVIDUALS)
         ]
@@ -163,7 +171,7 @@ if __name__ == "__main__":
         # export winners as json
         winners_list = list(winners_list)
         with open(
-            f'results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/stats.csv', "w"
+            f'results_{fitness_name}/run_random_map_{MAP_NAME.replace(".des", "")}/stats.csv', "w"
         ) as f:
             # write csv header
             f.write("best_fitness,generation,wrong_actions,loops,dead_ends,distance,first_winner\n")
@@ -172,6 +180,6 @@ if __name__ == "__main__":
                     f"{winner['best_fitness']},{winner['generation']},{winner['wrong_actions']},{winner['loops']},{winner['dead_ends']},{winner['distance']},{winner['first_win']}\n"
                 )
 
-        with open(f'results_{fitness_name}/run_{MAX_INDIVIDUALS}_map_{MAP_NAME.replace(".des", "")}/fitnesses.json', "w") as f:
+        with open(f'results_{fitness_name}/run_random_map_{MAP_NAME.replace(".des", "")}/fitnesses.json', "w") as f:
             # for each winner in winners_list, write fitnesses lists to json
             json.dump([winner["fitnesses"] for winner in winners_list], f)

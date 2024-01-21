@@ -68,7 +68,7 @@ def softmax_mutate(
     length = len(actions)
     error_vector = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
-    
+
     if decay and mutation_rate > 0.1:
         num_mutations = linear_decay(generation, max_generations) * num_mutations
 
@@ -77,6 +77,24 @@ def softmax_mutate(
         wrong = {actions[i]}
         actions[i] = np.random.choice(list(actions_set - wrong))
         error_vector[i] = 0
+
+    return actions
+
+
+def random_mutate(
+    actions,
+    error_vector: np.ndarray,
+    mutation_rate=0.8,
+    generation=0,
+    max_generations=1000,
+    decay=True,
+):
+    length = len(actions)
+    num_mutations = np.random.binomial(length, mutation_rate)
+
+    for _ in range(int(num_mutations)):
+        i = np.random.randint(0, length)
+        actions[i] = np.random.choice(list(actions_set))
 
     return actions
 
