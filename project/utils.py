@@ -52,8 +52,6 @@ def crossover(actions1, actions2):
     # randomly select a crossover point
     i = np.random.randint(1, min(len(actions1), len(actions2)))
     actions = actions1[:i] + actions2[i:]
-    # dictionary = {'actions': actions, 'index': i}
-    # return the two paths joined at the crossover point
     return actions
 
 
@@ -69,7 +67,7 @@ def softmax_mutate(
     error_vector = np.copy(error_vector)
     num_mutations = np.random.binomial(length, mutation_rate)
 
-    if decay and mutation_rate > 0.1:
+    if decay and mutation_rate >= 0.1:
         num_mutations = linear_decay(generation, max_generations) * num_mutations
 
     for _ in range(int(num_mutations)):
@@ -228,10 +226,6 @@ def run_genetic(
     best_individuals = []
 
     print("> Creating initial population...")
-    """individuals = [
-        Individual(starting_actions, 1, game_map) for _ in range(MAX_INDIVIDUALS)
-    ]
-    """
     individuals = [
         Individual(random_nactions(300), 1, game_map, fitness=fit)
         for _ in range(MAX_INDIVIDUALS)
@@ -245,13 +239,11 @@ def run_genetic(
     with tqdm(total=MAX_GENERATIONS, colour="#9244c9", ncols=150) as pbar:
         for generation in range(MAX_GENERATIONS):
             
-            # take 2 best individuals -> maybe can be replaced with probability distribution based on fitness
-            # also roulette wheel selection.
             p1, p2 = individuals[0], individuals[1]
             errors = p1.error_vector + p2.error_vector
             offspring = [
                 softmax_mutate(
-                    crossover(p1.actions, p2.actions),  ##
+                    crossover(p1.actions, p2.actions), 
                     errors,
                     generation=generation,
                     mutation_rate=mutation_rate,
@@ -304,11 +296,6 @@ def plot_winner_path(env, game, game_map, best_individuals):
     individual = best_individuals[-1]
 
     image = plt.imshow(game[:, 250:1000], aspect="auto")
-
-    # for generation, path in enumerate(best_paths):
-    # plt.title(f"Generation {generation}, fitness: {best_scores[generation]:.2f}, last move: {path[-1]}")
-    # start = best_paths[0]
-    # path = best_paths[-1]
     actions = []
     actions = best_individuals[-1].actions
     wrong = 0
@@ -332,7 +319,6 @@ def plot_winner_path(env, game, game_map, best_individuals):
                 )
             )
             image.set_data(s["pixel"][:, 300:950])
-            # time.sleep(0.1)
             if individual.path[i] == game_map.target:
                 print("YOU WON!")
                 break
@@ -361,16 +347,13 @@ def fitness_function(individual: Individual, game_map: Map) -> int:
 
 def fitness_function_dynamic(individual: Individual, game_map: Map) -> int:
     path: List[Tuple] = individual.path
-    length = len(path)
-    loops = individual.loops / length
-    dead_ends = individual.dead_ends / length
-    wrong_actions = individual.wrong_actions / length
     distance = -individual.distance
     if game_map.target in path:
         # retrurn the number of steps to reach the target
         return -individual.target_index
-
-    return distance - 300  # we penalize the distance if the target is not reached
+    
+    # we penalize the distance if the target is not reached
+    return distance - 300  
 
 
 ######  MiniHack MAP UTILS  #########################################
@@ -564,7 +547,6 @@ def pathlen(path, target):
 # ---------------------------------------------
 # to generate a random path, we need to generate a random sequence of actions
 # NOTE: we generate a random sequence of VALID actions, so that the agent will never go through a wall
-# we could implement the control in PROLOG
 
 
 def build_path_rand(
@@ -616,9 +598,6 @@ def random_nsteps(
         current = neighbor
     path = build_path_rand(parent, target)  # type: ignore
     return path[1:]
-
-
-# TODO: write 'random_nsteps' using the KB
 
 
 def random_nactions(actions=100):

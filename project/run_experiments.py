@@ -81,7 +81,7 @@ best_individuals = []
 
 def run_experiment(winners, lock):
     # take seed from dev urandom
-    seed = int.from_bytes(os.urandom(4), byteorder="little")
+    seed = 32
     random.seed(seed)
     np.random.seed(seed)
     fitnesses_list = []
@@ -114,7 +114,7 @@ def run_experiment(winners, lock):
         errors = p1.error_vector + p2.error_vector
 
         offspring = [
-            random_mutate(
+            softmax_mutate(
                 crossover(p1.actions, p2.actions), 
                 errors, 
                 generation=generation,
